@@ -2580,6 +2580,7 @@ setTheme('dark');
       newVer: '发现新版本', cur: '当前', remote: '最新', chk: '检查更新', checking: '正在检查更新…',
       latest: '已是最新版本', notes: '更新日志', upd: '立即更新', copy: '复制更新命令', copied: '已复制到剪贴板',
       repoUn: '未配置更新仓库', repoUnTip: '此部署版本没有关联 GitHub 更新仓库，自动更新不可用。',
+      noRelease: '仓库暂无 Release（推送 tag 后自动生效）',
       err: '检查失败：网络或 GitHub API 限流，请稍后重试', about: '关于本部署', deploy: '部署信息',
       ver: '版本', build: '构建时间', repo: '更新仓库', img: '镜像', lastChk: '上次检查',
       copyTip: '更新命令已复制。在服务器上执行：docker compose pull && docker compose up -d',
@@ -2590,6 +2591,7 @@ setTheme('dark');
       newVer: 'New version', cur: 'installed', remote: 'latest', chk: 'Check update', checking: 'Checking…',
       latest: 'Up to date', notes: 'Release notes', upd: 'Update now', copy: 'Copy update command', copied: 'Copied to clipboard',
       repoUn: 'No update repo', repoUnTip: 'This deployment is not linked to a GitHub repository.',
+      noRelease: 'No release published yet (auto-activates once you push a tag)',
       err: 'Check failed (network or GitHub API rate limit). Retry later.', about: 'About', deploy: 'Deployment',
       ver: 'Version', build: 'Build', repo: 'Repository', img: 'Image', lastChk: 'Last check',
       copyTip: 'Command copied. On the server run: docker compose pull && docker compose up -d',
@@ -2652,6 +2654,7 @@ setTheme('dark');
   function paintStatus() {
     var el = $('pm-status');
     if (!cfg.repo) { el.className = 'pm-status'; el.textContent = t('repoUnTip'); return; }
+    if (st.empty) { el.className = 'pm-status'; el.textContent = t('noRelease'); return; }
     if (st.latest && cmpVer(cfg.version, st.latest) > 0) {
       el.className = 'pm-status has';
       el.textContent = t('newVer') + ' ' + fmtVer(st.latest) + '（' + t('cur') + ' ' + fmtVer(cfg.version) + '）';
@@ -2695,7 +2698,8 @@ setTheme('dark');
             .then(function (r2) { return r2.ok ? r2.json() : []; })
             .then(function (tags) {
               if (tags && tags.length) return { tag_name: tags[0].name, body: '', html_url: 'https://github.com/' + cfg.repo + '/releases', published_at: null };
-              throw new Error('no release');
+              /* 仓库还没有任何 Release / tag：不是错误，只是尚未发布 */
+              return { tag_name: '', body: '', html_url: 'https://github.com/' + cfg.repo, published_at: null, empty: true };
             });
         }
         if (!r.ok) throw new Error('http ' + r.status);
@@ -2703,6 +2707,7 @@ setTheme('dark');
       })
       .then(function (rel) {
         st.latest = rel.tag_name || rel.name || '';
+        st.empty = rel.empty === true;
         st.notes = rel.body || '';
         st.url = rel.html_url || '';
         st.published = rel.published_at || null;
