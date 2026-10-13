@@ -1,369 +1,903 @@
-/* ===== 内置 PDF 双语翻译与文献精读工作台（深度契合主题） ===== */
+/* ===== AI 格式级全文档双语翻译工坊与多人协同样式 (v5.3) ===== */
+
+/* 顶栏常驻：多人在线研读协同胶囊 */
+#pm-collab-pill {
+  position: fixed;
+  top: 16px;
+  right: 180px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(18, 17, 16, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 106, 0.28);
+  border-radius: 999px;
+  color: #eae8e4;
+  font-size: 12px;
+  font-family: inherit;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+#pm-collab-pill:hover {
+  border-color: #c9a86a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(201, 168, 106, 0.15);
+}
+.pulse-dot-online {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5aa87e;
+  box-shadow: 0 0 8px #5aa87e;
+  animation: pm-pulse 2s infinite ease-in-out;
+}
+@keyframes pm-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+/* 左下角入口浮动胶囊 */
 #pm-xl-chip {
-  position: fixed; left: 18px; bottom: 18px; z-index: 9991;
-  display: flex; align-items: center; gap: 9px;
-  padding: 8px 15px; border-radius: 999px;
-  background: var(--popover, rgba(20,19,18,.96));
-  border: 1px solid var(--stroke2, rgba(255,255,255,.14));
-  box-shadow: 0 10px 32px rgba(0,0,0,.45);
-  color: var(--fg, #eae8e4); cursor: pointer; user-select: none;
-  font: 13px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  transition: all .2s cubic-bezier(.16,1,.3,1);
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  background: rgba(18, 17, 16, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 106, 0.36);
+  border-radius: 999px;
+  color: #eae8e4;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
 #pm-xl-chip:hover {
-  border-color: var(--acc, #c9a86a);
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(201,168,106,.2);
+  border-color: #c9a86a;
+  box-shadow: 0 14px 40px rgba(201, 168, 106, 0.22);
 }
 #pm-xl-chip .ico {
-  width: 15px; height: 15px; flex: none;
-  stroke: var(--acc, #c9a86a); fill: none; stroke-width: 2;
-  stroke-linecap: round; stroke-linejoin: round;
+  width: 17px;
+  height: 17px;
+  stroke: #c9a86a;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 #pm-xl-chip .sub {
-  color: var(--dim, #9a978f); font-size: 11px;
-  background: var(--glass, rgba(255,255,255,.06));
-  padding: 2px 6px; border-radius: 4px;
+  font-size: 11px;
+  color: #9a978f;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 遮罩层 */
+/* 全屏模态主窗口 */
 #pm-xl {
-  position: fixed; inset: 0; z-index: 9995;
-  display: none; align-items: center; justify-content: center;
-  background: rgba(8, 7, 6, 0.76);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(7, 6, 6, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  align-items: center;
+  justify-content: center;
   padding: 24px;
-  opacity: 0; transition: opacity .22s cubic-bezier(.16,1,.3,1);
+  box-sizing: border-box;
 }
-#pm-xl.show {
-  display: flex; opacity: 1;
+#pm-xl.open {
+  display: flex;
 }
-
-/* 核心工作台视窗 */
 #pm-xl-box {
-  width: 100%; max-width: 1220px; height: 90vh; max-height: 840px;
-  display: flex; flex-direction: column;
-  background: var(--panel, #141312);
-  border: 1px solid var(--stroke2, rgba(255,255,255,.16));
+  width: 100%;
+  max-width: 1560px;
+  height: 94vh;
+  background: #11100f;
+  border: 1px solid rgba(201, 168, 106, 0.25);
   border-radius: 16px;
-  box-shadow: 0 28px 72px rgba(0,0,0,.68), 0 0 0 1px rgba(201,168,106,.12);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  transform: scale(0.98);
-  transition: transform .22s cubic-bezier(.16,1,.3,1);
-}
-#pm-xl.show #pm-xl-box {
-  transform: scale(1);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
-/* 顶部导航与操作栏 */
+/* 顶部工作台主导航栏 */
 .xl-top {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 14px 22px; flex: none;
-  background: var(--popover, #171615);
-  border-bottom: 1px solid var(--stroke, rgba(255,255,255,.09));
-  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(22, 21, 19, 0.75);
 }
 .xl-brand {
-  display: flex; align-items: center; gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 .xl-brand-icon {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: var(--accSoft, rgba(201,168,106,.15));
-  border: 1px solid var(--acc, #c9a86a);
-  color: var(--acc, #c9a86a);
-  display: flex; align-items: center; justify-content: center;
-  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(201, 168, 106, 0.12);
+  border: 1px solid rgba(201, 168, 106, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9a86a;
 }
 .xl-brand-title {
-  font-size: 14px; font-weight: 600; color: var(--fg, #eae8e4);
-  letter-spacing: .02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #eae8e4;
+  letter-spacing: 0.3px;
+}
+.xl-ver-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: rgba(201, 168, 106, 0.18);
+  border: 1px solid rgba(201, 168, 106, 0.32);
+  color: #c9a86a;
+  border-radius: 999px;
 }
 .xl-brand-badge {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--dim, #9a978f);
-  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #9a978f;
+  margin-top: 2px;
 }
 .pulse-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #5aa87e; box-shadow: 0 0 8px #5aa87e;
-  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a86a;
+  box-shadow: 0 0 6px #c9a86a;
+  animation: pm-pulse 1.8s infinite;
 }
 
-/* 模式 Tabs */
-.xl-tabs {
-  display: flex; align-items: center; gap: 4px;
-  background: var(--field, rgba(255,255,255,.04));
-  padding: 3px; border-radius: 9px;
-  border: 1px solid var(--stroke, rgba(255,255,255,.08));
+/* 顶部配置栏 (Service, Mode, Pages, Threads) */
+.xl-config-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
-.xl-tab {
-  appearance: none; border: none; background: transparent;
-  color: var(--dim, #9a978f); font-size: 12px; font-weight: 500;
-  padding: 6px 12px; border-radius: 7px; cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  transition: all .15s ease;
+.xl-cfg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9a978f;
 }
-.xl-tab:hover {
-  color: var(--fg, #eae8e4);
-  background: rgba(255,255,255,.04);
+.xl-cfg-item label {
+  font-weight: 500;
+  color: #b5afa3;
+  white-space: nowrap;
 }
-.xl-tab.active {
-  color: var(--onAcc, #141311);
-  background: var(--acc, #c9a86a);
-  font-weight: 600;
+.xl-cfg-item select,
+.xl-cfg-item input[type="text"] {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: #eae8e4;
+  padding: 5px 9px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
 }
-.xl-tab.active svg { stroke: var(--onAcc, #141311); }
+.xl-cfg-item select:focus,
+.xl-cfg-item input[type="text"]:focus {
+  border-color: #c9a86a;
+}
+.xl-cfg-item input[type="text"] {
+  width: 105px;
+}
+.xl-pill-group {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  padding: 2px;
+}
+.xl-pill {
+  border: none;
+  background: transparent;
+  color: #9a978f;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.xl-pill.active {
+  background: rgba(201, 168, 106, 0.22);
+  color: #eae8e4;
+  font-weight: 500;
+}
+.xl-icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 12px;
+  line-height: 1;
+  transition: all 0.15s;
+}
+.xl-icon-btn:hover {
+  border-color: #c9a86a;
+  background: rgba(201, 168, 106, 0.15);
+}
 
-/* 操作控制项 */
+/* 顶部操作区 (语言选择与启动按钮) */
 .xl-actions {
-  display: flex; align-items: center; gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 .xl-lang-group {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--field, rgba(255,255,255,.04));
-  border: 1px solid var(--stroke2, rgba(255,255,255,.14));
-  border-radius: 9px; padding: 2px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px 8px;
 }
 .xl-lang-group select {
-  appearance: none; background: transparent; border: none;
-  color: var(--fg, #eae8e4); font-size: 12px; padding: 4px 6px;
-  outline: none; cursor: pointer;
-}
-.xl-lang-group select option {
-  background: #1a1918; color: #eae8e4;
+  background: transparent;
+  border: none;
+  color: #eae8e4;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
 }
 .xl-arrow {
-  color: var(--dim, #9a978f); font-size: 12px;
+  color: #c9a86a;
+  font-size: 12px;
 }
 .xl-btn {
-  appearance: none; border: 1px solid var(--stroke2, rgba(255,255,255,.16));
-  background: var(--glass, rgba(255,255,255,.05));
-  color: var(--fg, #eae8e4); border-radius: 8px;
-  padding: 6px 13px; font-size: 12px; font-weight: 500;
-  cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
-  transition: all .15s ease; white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #eae8e4;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 .xl-btn:hover:not(:disabled) {
-  background: var(--accSoft, rgba(201,168,106,.15));
-  border-color: var(--acc, #c9a86a);
-  color: var(--fg, #eae8e4);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
 }
 .xl-btn.primary {
-  background: var(--acc, #c9a86a);
-  border-color: var(--acc, #c9a86a);
-  color: var(--onAcc, #141311);
+  background: #c9a86a;
+  border-color: #c9a86a;
+  color: #11100f;
   font-weight: 600;
 }
 .xl-btn.primary:hover:not(:disabled) {
-  background: #d8ba7e; border-color: #d8ba7e;
-  box-shadow: 0 4px 14px rgba(201,168,106,.3);
+  background: #dfc28d;
+  box-shadow: 0 4px 14px rgba(201, 168, 106, 0.35);
 }
-.xl-btn:disabled {
-  opacity: .4; cursor: not-allowed;
+.xl-btn.gold {
+  background: rgba(201, 168, 106, 0.18);
+  border-color: rgba(201, 168, 106, 0.4);
+  color: #e8c988;
+}
+.xl-btn.gold:hover:not(:disabled) {
+  background: rgba(201, 168, 106, 0.28);
+  border-color: #c9a86a;
 }
 .xl-btn.sm {
-  padding: 4px 10px; font-size: 11px;
+  padding: 5px 10px;
+  font-size: 11px;
 }
-.close-btn {
-  padding: 6px 10px; font-size: 14px; line-height: 1;
+.xl-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.xl-btn.close-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #9a978f;
+}
+.xl-btn.close-btn:hover {
+  color: #eae8e4;
+  border-color: #dd7c6c;
 }
 
-/* 主体内容区（左右并排） */
-.xl-body {
-  flex: 1 1 auto; display: flex; min-height: 0;
-  background: var(--stroke, rgba(255,255,255,.06));
-  gap: 1px;
+/* 顶部第二行：模式 Tabs 与快捷工具 */
+.xl-sub-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: rgba(18, 17, 16, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-.xl-pane {
-  flex: 1 1 50%; min-width: 0; display: flex; flex-direction: column;
-  background: var(--bg, #0d0c0b);
+.xl-tabs {
+  display: flex;
+  gap: 6px;
 }
-.xl-pane-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 18px; border-bottom: 1px solid var(--stroke, rgba(255,255,255,.08));
-  background: rgba(255,255,255,.015);
+.xl-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #9a978f;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.xl-pane-title {
-  font-size: 11px; font-weight: 700; letter-spacing: .08em;
-  color: var(--dim, #9a978f); text-transform: uppercase;
+.xl-tab:hover {
+  color: #eae8e4;
+  background: rgba(255, 255, 255, 0.04);
 }
-.xl-pane-badge {
-  font-size: 11px; color: var(--dim2, #6f6c66);
-  background: rgba(255,255,255,.04); padding: 2px 8px; border-radius: 4px;
+.xl-tab.active {
+  color: #c9a86a;
+  background: rgba(201, 168, 106, 0.12);
+  border-color: rgba(201, 168, 106, 0.28);
+  font-weight: 500;
+}
+.xl-quick-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.xl-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #9a978f;
+  cursor: pointer;
+}
+.xl-toggle-label input {
+  accent-color: #c9a86a;
+}
+.xl-shared-cloud-badge {
+  font-size: 11px;
+  color: #5aa87e;
+  background: rgba(90, 168, 126, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(90, 168, 126, 0.25);
 }
 .xl-text-btn {
-  background: none; border: none; color: var(--acc, #c9a86a);
-  font-size: 12px; cursor: pointer; padding: 2px 6px;
-  text-decoration: underline; text-underline-offset: 2px;
+  background: transparent;
+  border: none;
+  color: #c9a86a;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 5px;
+  transition: background 0.15s;
 }
-.xl-text-btn.danger { color: #dd7c6c; }
-.xl-pane-scroll {
-  flex: 1 1 auto; overflow-y: auto; padding: 18px 22px;
+.xl-text-btn:hover {
+  background: rgba(201, 168, 106, 0.14);
+}
+.xl-text-btn.danger {
+  color: #dd7c6c;
 }
 
-/* 拖拽上传区 */
-.xl-dropzone {
-  border: 2px dashed var(--stroke2, rgba(255,255,255,.18));
-  border-radius: 14px; padding: 42px 24px; text-align: center;
-  background: rgba(255,255,255,.015); cursor: pointer;
-  transition: all .2s ease; margin-bottom: 16px;
+/* 进度管道条 (Pipeline Steps) */
+.xl-pipeline-bar {
+  padding: 10px 20px 8px;
+  background: rgba(13, 12, 11, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-.xl-dropzone:hover, .xl-dropzone.over {
-  border-color: var(--acc, #c9a86a);
-  background: var(--accSoft, rgba(201,168,106,.07));
-  transform: translateY(-1px);
+.xl-pipeline-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+.step-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #6f6c66;
+  transition: all 0.2s;
+}
+.step-badge.active {
+  background: rgba(201, 168, 106, 0.2);
+  color: #e8c988;
+  font-weight: 500;
+  box-shadow: 0 0 8px rgba(201, 168, 106, 0.3);
+}
+.step-badge.done {
+  background: rgba(90, 168, 126, 0.15);
+  color: #5aa87e;
+}
+.step-arrow {
+  color: #4a4740;
+}
+.xl-prog-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.xl-prog-track i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #c9a86a, #e2c286);
+  transition: width 0.3s ease-out;
+}
+
+/* 主体左右双栏布局 */
+.xl-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+  position: relative;
+  background: #0d0c0b;
+}
+.xl-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.xl-pane:last-child {
+  border-right: none;
+}
+.xl-pane-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px;
+  background: rgba(20, 19, 18, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.pane-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.xl-pane-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: #b5afa3;
+}
+.xl-pane-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9a978f;
+}
+.xl-pane-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  scroll-behavior: smooth;
+}
+
+/* 文件拖放区域 */
+.xl-dropzone {
+  border: 1.5px dashed rgba(201, 168, 106, 0.3);
+  border-radius: 12px;
+  padding: 44px 20px;
+  text-align: center;
+  background: rgba(201, 168, 106, 0.02);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+.xl-dropzone:hover {
+  border-color: #c9a86a;
+  background: rgba(201, 168, 106, 0.05);
 }
 .xl-drop-icon {
-  color: var(--acc, #c9a86a); margin-bottom: 14px;
+  color: #c9a86a;
+  margin-bottom: 12px;
 }
 .xl-drop-main {
-  font-size: 15px; font-weight: 600; color: var(--fg, #eae8e4); margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #eae8e4;
+  margin-bottom: 6px;
 }
 .xl-drop-sub {
-  font-size: 12px; color: var(--dim, #9a978f); margin-bottom: 16px;
+  font-size: 12px;
+  color: #9a978f;
+  margin-bottom: 14px;
 }
 .xl-drop-tags {
-  display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .xl-drop-tags span {
-  font-size: 11px; color: var(--dim, #9a978f);
-  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
-  padding: 3px 8px; border-radius: 6px;
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: #b5afa3;
 }
 
 /* 文件信息卡片 */
 .xl-file-card {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; margin-bottom: 16px;
-  background: var(--popover, #171615);
-  border: 1px solid var(--stroke2, rgba(255,255,255,.14));
-  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  margin-bottom: 14px;
+}
+.xl-file-icon {
+  font-size: 20px;
 }
 .xl-file-info {
-  display: flex; flex-direction: column; gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 .xl-file-name {
-  font-size: 13px; font-weight: 600; color: var(--fg, #eae8e4);
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #eae8e4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .xl-file-meta {
-  font-size: 11px; color: var(--dim, #9a978f);
+  font-size: 11px;
+  color: #9a978f;
 }
 
-/* 文本粘贴区 */
+/* 馆藏文献选择器 */
+.xl-paper-picker {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.picker-label {
+  font-size: 12px;
+  color: #b5afa3;
+  margin-bottom: 8px;
+}
+.picker-select {
+  width: 100%;
+  padding: 7px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: #eae8e4;
+  font-size: 12px;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+/* 自由文本输入区 */
 .xl-paste-wrap {
   margin-bottom: 16px;
 }
 .xl-paste-wrap textarea {
-  width: 100%; min-height: 220px;
-  background: var(--field, rgba(255,255,255,.04));
-  color: var(--fg, #eae8e4);
-  border: 1px solid var(--stroke2, rgba(255,255,255,.14));
-  border-radius: 10px; padding: 14px 16px;
-  font-size: 13px; line-height: 1.7; resize: vertical;
-  font-family: inherit; outline: none;
+  width: 100%;
+  height: 180px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+  color: #eae8e4;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
 }
 .xl-paste-wrap textarea:focus {
-  border-color: var(--acc, #c9a86a);
-  box-shadow: 0 0 0 2px var(--ring, rgba(201,168,106,.2));
+  border-color: #c9a86a;
 }
 
-/* 段落卡片 */
+/* 双语段落列表（严格 1:1 对齐与公式渲染） */
 .xl-list {
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.xl-card {
-  position: relative; padding: 12px 16px; border-radius: 10px;
-  background: var(--field, rgba(255,255,255,.03));
-  border: 1px solid var(--stroke, rgba(255,255,255,.07));
-  transition: all .15s ease;
+.xl-item {
+  position: relative;
+  padding: 12px 14px 12px 42px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.68;
+  color: #eae8e4;
+  transition: all 0.15s;
 }
-.xl-card:hover {
-  border-color: var(--stroke2, rgba(255,255,255,.16));
-  background: rgba(255,255,255,.05);
+.xl-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(201, 168, 106, 0.3);
 }
-.xl-card.active {
-  border-color: var(--acc, #c9a86a);
-  background: var(--accSoft, rgba(201,168,106,.08));
-  box-shadow: 0 0 12px rgba(201,168,106,.15);
+.xl-item.highlight {
+  border-color: #c9a86a;
+  background: rgba(201, 168, 106, 0.08);
 }
-.xl-card-meta {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 8px; font-size: 11px; color: var(--dim2, #6f6c66);
+.xl-item-num {
+  position: absolute;
+  left: 10px;
+  top: 13px;
+  font-size: 10px;
+  font-family: monospace;
+  color: #c9a86a;
+  background: rgba(201, 168, 106, 0.12);
+  padding: 1px 5px;
+  border-radius: 3px;
+  user-select: none;
 }
-.xl-card-idx {
-  font-family: monospace; font-weight: 600; color: var(--acc, #c9a86a);
+.xl-item.heading {
+  font-weight: 600;
+  font-size: 14px;
+  color: #e8c988;
+  border-left: 3px solid #c9a86a;
 }
-.xl-card-text {
-  font-size: 13.5px; line-height: 1.7; color: var(--fg, #eae8e4);
-  white-space: pre-wrap; word-break: break-word;
+.xl-item.math {
+  background: rgba(0, 0, 0, 0.3);
+  font-family: "Latin Modern Math", "Cambria Math", serif;
 }
-.xl-card-text.wait {
-  color: var(--dim, #9a978f); font-style: italic;
-}
-.xl-copy-btn {
-  opacity: 0; appearance: none; background: transparent; border: none;
-  color: var(--dim, #9a978f); cursor: pointer; font-size: 11px;
-  padding: 2px 6px; border-radius: 4px; transition: opacity .15s ease;
-}
-.xl-card:hover .xl-copy-btn { opacity: 1; }
-.xl-copy-btn:hover { color: var(--acc, #c9a86a); background: rgba(255,255,255,.06); }
 
-/* 空状态 */
+/* 右栏空状态 */
 .xl-empty-view {
-  height: 100%; min-height: 280px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; text-align: center;
-  padding: 30px; color: var(--dim, #9a978f);
+  padding: 60px 30px;
+  text-align: center;
+  color: #6f6c66;
 }
 .xl-empty-icon {
-  color: var(--dim2, #6f6c66); margin-bottom: 12px;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
 .xl-empty-title {
-  font-size: 14px; font-weight: 600; color: var(--fg, #eae8e4); margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #9a978f;
+  margin-bottom: 6px;
 }
 .xl-empty-desc {
-  font-size: 12px; line-height: 1.6; max-width: 360px; color: var(--dim, #9a978f);
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
-/* 底部状态条 */
+/* 侧边研读讨论与批注抽屉 */
+.xl-notes-drawer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 320px;
+  background: #161513;
+  border-left: 1px solid rgba(201, 168, 106, 0.25);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+}
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.notes-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #eae8e4;
+}
+.notes-close {
+  background: transparent;
+  border: none;
+  color: #9a978f;
+  cursor: pointer;
+}
+.notes-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.note-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  padding: 8px 10px;
+}
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #c9a86a;
+  margin-bottom: 4px;
+}
+.note-content {
+  font-size: 12px;
+  color: #eae8e4;
+  line-height: 1.5;
+}
+.notes-footer {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.notes-footer input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #eae8e4;
+  padding: 6px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+/* 底部状态条与导出下载工具栏 */
 .xl-foot {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 10px 22px; flex: none;
-  background: var(--popover, #171615);
-  border-top: 1px solid var(--stroke, rgba(255,255,255,.09));
-  font-size: 12px; color: var(--dim, #9a978f);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background: rgba(22, 21, 19, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 .xl-foot-status {
-  display: flex; align-items: center; gap: 8px; flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9a978f;
 }
 .xl-status-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--acc, #c9a86a);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5aa87e;
 }
-.xl-foot-prog {
-  flex: 1 1 auto; max-width: 480px; display: flex; align-items: center; gap: 10px;
-}
-.xl-prog-bar {
-  flex: 1 1 auto; height: 6px; border-radius: 99px;
-  background: rgba(255,255,255,.08); overflow: hidden;
-}
-.xl-prog-bar i {
-  display: block; height: 100%; width: 0%;
-  background: linear-gradient(90deg, #c9a86a, #e0c894);
-  transition: width .25s ease;
-  box-shadow: 0 0 8px rgba(201,168,106,.4);
-}
-.xl-prog-pct {
-  font-size: 11px; font-family: monospace; font-weight: 600; min-width: 32px;
+.xl-status-dot.busy {
+  background: #dd9a52;
+  animation: pm-pulse 1s infinite;
 }
 .xl-foot-stats {
-  display: flex; align-items: center; gap: 12px; flex: none;
+  font-size: 12px;
+  color: #b5afa3;
+}
+.xl-foot-downloads {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-@media (max-width: 860px) {
-  #pm-xl-box { height: 96vh; }
-  .xl-body { flex-direction: column; }
-  .xl-pane { flex: 1 1 auto; }
-  .xl-top { gap: 10px; }
-  .xl-foot-prog { display: none; }
+/* API Key 配置弹窗 */
+.xl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.xl-modal-card {
+  width: 480px;
+  background: #161513;
+  border: 1px solid rgba(201, 168, 106, 0.35);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+}
+.xl-modal-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #eae8e4;
+  margin-bottom: 14px;
+}
+.xl-modal-close {
+  background: transparent;
+  border: none;
+  color: #9a978f;
+  cursor: pointer;
+  font-size: 14px;
+}
+.xl-modal-tip {
+  font-size: 12px;
+  color: #9a978f;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.xl-form-item {
+  margin-bottom: 12px;
+}
+.xl-form-item label {
+  display: block;
+  font-size: 11px;
+  color: #b5afa3;
+  margin-bottom: 5px;
+}
+.xl-form-item input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  color: #eae8e4;
+  font-size: 12px;
+  outline: none;
+}
+.xl-form-item input:focus {
+  border-color: #c9a86a;
+}
+.xl-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* 主文献卡片上的“AI 双语精读”按钮专用样式 */
+.act.xlate-btn {
+  background: rgba(201, 168, 106, 0.16) !important;
+  border-color: rgba(201, 168, 106, 0.35) !important;
+  color: #e8c988 !important;
+  font-weight: 500 !important;
+}
+.act.xlate-btn:hover {
+  background: rgba(201, 168, 106, 0.28) !important;
+  border-color: #c9a86a !important;
+  box-shadow: 0 2px 10px rgba(201, 168, 106, 0.25);
 }

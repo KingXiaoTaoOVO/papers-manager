@@ -1,4 +1,4 @@
-# 论文期刊管理器 · Papers Manager（单容器：站点 + 内置 PDF 双语翻译）
+# 论文期刊管理器 · Papers Manager（单容器：站点 + 内置学术格式级双语翻译与多人协同）
 # 用法一：1Panel → 容器 → 编排 → 创建编排，粘贴本文件内容
 # 用法二：docker compose up -d --build
 services:
@@ -9,6 +9,8 @@ services:
     ports:
       - "18080:80"
     volumes:
-      # 站点内容与 nginx 配置外挂，便于热更新（镜像内也有同款副本）
+      # 站点内容、nginx 配置与后端接口外挂，便于热更新与持久化
       - ./html:/usr/share/nginx/html:ro
       - ./conf.d:/etc/nginx/conf.d:ro
+      - ./api:/app/api:ro
+      - ./data:/app/data

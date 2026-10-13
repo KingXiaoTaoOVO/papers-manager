@@ -1,156 +1,315 @@
-<!-- ===== 内置 PDF 双语翻译与精读工作台 ===== -->
-<div id="pm-xl-chip" title="内置 PDF 双语翻译与精读（Bing 神经网络引擎，无需 Key）">
+<!-- ===== AI 格式级全文档双语翻译工坊与多人协同工作台 (v5.3) ===== -->
+<div id="pm-xl-chip" title="AI 格式级全文档双语翻译工坊（支持 PDF / Word 原版排版与公式保护）">
   <svg class="ico" viewBox="0 0 24 24"><path d="M4 5h7M7.5 5v1c0 4-1.5 8-4 11"/><path d="M5 12c2.5 3 5 4.5 8 5.5"/><path d="M13 20l3.5-8 3.5 8M14.2 17h4.6"/></svg>
-  <span class="txt" id="pm-xl-chip-txt">PDF 双语翻译</span>
-  <span class="sub" id="pm-xl-chip-sub">内置引擎</span>
+  <span class="txt" id="pm-xl-chip-txt">全文档双语翻译</span>
+  <span class="sub" id="pm-xl-chip-sub">PDF / Word 格式级</span>
 </div>
 
-<div id="pm-xl" role="dialog" aria-modal="true" aria-label="PDF 双语翻译与文献精读工作台">
+<!-- 顶栏多人在线研读学者胶囊 -->
+<div id="pm-collab-pill" title="多人在线研读协同（点击查看在线学者与讨论）">
+  <span class="pulse-dot-online"></span>
+  <span class="pill-txt" id="pm-online-count">👥 1 位学者在线研读</span>
+</div>
+
+<div id="pm-xl" role="dialog" aria-modal="true" aria-label="学术文档双语翻译与精读工坊">
   <div id="pm-xl-box">
     <!-- 顶部工作台导航栏 -->
     <div class="xl-top">
       <div class="xl-brand">
         <div class="xl-brand-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
             <path d="M8 7h8M8 11h6"/>
           </svg>
         </div>
         <div>
-          <div class="xl-brand-title" id="pm-xl-title">PDF 双语精读与翻译工作台</div>
-          <div class="xl-brand-badge"><span class="pulse-dot"></span>Bing 翻译引擎 · 容器内置免 Key · 国内直连</div>
+          <div class="xl-brand-title">
+            <span>学术文档 1:1 格式级双语翻译工坊</span>
+            <span class="xl-ver-badge">v5.3 全能版</span>
+          </div>
+          <div class="xl-brand-badge">
+            <span class="pulse-dot"></span>
+            <span id="pm-xl-engine-desc">PDFMathTranslate 级排版保护 · 支持 PDF / Word (.docx) · 公式与图表 1:1 留存</span>
+          </div>
         </div>
       </div>
 
-      <!-- 模式切换 Tabs -->
-      <div class="xl-tabs">
-        <button class="xl-tab active" id="pm-xl-tab-pdf" type="button">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          PDF 文档解析
-        </button>
-        <button class="xl-tab" id="pm-xl-tab-paste" type="button">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          自由文本翻译
-        </button>
-        <button class="xl-tab" id="pm-xl-tab-paper" type="button" title="载入当前选中的论文摘要与正文">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          当前论文导入
-        </button>
+      <!-- 中间操作区：服务、模式、页码、并发配置 -->
+      <div class="xl-config-bar">
+        <!-- 翻译服务选择 -->
+        <div class="xl-cfg-item" title="选择翻译服务后端">
+          <label>服务 (Service):</label>
+          <select id="pm-xl-service">
+            <option value="bing" selected>Bing 神经网络 (免 Key 直连)</option>
+            <option value="deepseek">DeepSeek 学术大模型</option>
+            <option value="openai">OpenAI (GPT-4o/o3-mini)</option>
+            <option value="google">Google 翻译</option>
+          </select>
+          <button class="xl-icon-btn" id="pm-xl-api-btn" type="button" title="配置大模型 API Key 与自定义端点">⚙️</button>
+        </div>
+
+        <!-- 输出模式：双语对照 vs 单语纯译 -->
+        <div class="xl-cfg-item" title="输出模式">
+          <label>输出 (Output):</label>
+          <div class="xl-pill-group">
+            <button class="xl-pill active" id="pm-xl-mode-dual" type="button" data-mode="dual">双语对照</button>
+            <button class="xl-pill" id="pm-xl-mode-mono" type="button" data-mode="mono">单语纯译</button>
+          </div>
+        </div>
+
+        <!-- 页码区间 -->
+        <div class="xl-cfg-item" title="翻译页码范围，例如 1-3, 5 或留空翻译全部">
+          <label>页码 (Pages):</label>
+          <input type="text" id="pm-xl-pages" placeholder="全部 (例: 1-3, 5)" value="">
+        </div>
+
+        <!-- 并发线程 -->
+        <div class="xl-cfg-item" title="并发加速线程数">
+          <label>并发 (Threads):</label>
+          <select id="pm-xl-threads">
+            <option value="4" selected>4 线程</option>
+            <option value="8">8 线程 (高速)</option>
+            <option value="16">16 线程 (极速)</option>
+            <option value="1">1 线程 (单步)</option>
+          </select>
+        </div>
       </div>
 
-      <!-- 语言选择与主要操作按钮 -->
+      <!-- 语言选择与控制按钮 -->
       <div class="xl-actions">
         <div class="xl-lang-group">
           <select id="pm-xl-from" title="源语言"></select>
-          <span class="xl-arrow">→</span>
+          <span class="xl-arrow">⇄</span>
           <select id="pm-xl-to" title="目标语言"></select>
         </div>
+
         <button class="xl-btn primary" id="pm-xl-run" type="button" disabled>
           <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           开始翻译
         </button>
         <button class="xl-btn" id="pm-xl-stop" type="button" disabled>停止</button>
-        <button class="xl-btn" id="pm-xl-clear" type="button">清空</button>
         <button class="xl-btn close-btn" id="pm-xl-close" type="button" title="关闭 (Esc)">✕</button>
       </div>
     </div>
 
+    <!-- 顶部第二行：模式选择与快捷工具 -->
+    <div class="xl-sub-bar">
+      <div class="xl-tabs">
+        <button class="xl-tab active" id="pm-xl-tab-doc" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF / Word 文档翻译
+        </button>
+        <button class="xl-tab" id="pm-xl-tab-paper" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          从馆藏文献载入
+        </button>
+        <button class="xl-tab" id="pm-xl-tab-paste" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          公式与自由文本翻译
+        </button>
+      </div>
+
+      <div class="xl-quick-tools">
+        <!-- 联动滚动开关 -->
+        <label class="xl-toggle-label" title="开启后左右两栏滚动与翻页联动">
+          <input type="checkbox" id="pm-xl-sync-scroll" checked>
+          <span>左右联动滚动</span>
+        </label>
+        <!-- 团队共享云端成果指示 -->
+        <span class="xl-shared-cloud-badge" id="pm-xl-cloud-status" style="display:none;">
+          ⚡ 云端已同步团队精译成果
+        </span>
+        <!-- 研读批注抽屉切换按钮 -->
+        <button class="xl-text-btn" id="pm-xl-toggle-notes" type="button">
+          💬 研读讨论与批注 (<span id="pm-xl-notes-badge">0</span>)
+        </button>
+      </div>
+    </div>
+
+    <!-- 流程进度条与阶段指示器 -->
+    <div class="xl-pipeline-bar" id="pm-xl-pipeline" style="display:none;">
+      <div class="xl-pipeline-steps">
+        <span class="step-badge" id="step-1">1. 解析文档</span>
+        <span class="step-arrow">→</span>
+        <span class="step-badge" id="step-2">2. 公式/版面保护</span>
+        <span class="step-arrow">→</span>
+        <span class="step-badge" id="step-3">3. 神经/大模型翻译</span>
+        <span class="step-arrow">→</span>
+        <span class="step-badge" id="step-4">4. 1:1 版面重构</span>
+        <span class="step-arrow">→</span>
+        <span class="step-badge" id="step-5">5. 文档就绪</span>
+      </div>
+      <div class="xl-prog-track"><i id="pm-xl-prog"></i></div>
+    </div>
+
     <!-- 主体左右双栏 -->
     <div class="xl-body">
-      <!-- 左栏：原文 -->
+      <!-- 左栏：原文 (SOURCE) -->
       <div class="xl-pane" id="pm-xl-left-pane">
         <div class="xl-pane-bar">
-          <span class="xl-pane-title">原文 (SOURCE)</span>
-          <span class="xl-pane-badge" id="pm-xl-src-badge">等待载入内容</span>
-          <button class="xl-text-btn" id="pm-xl-pick-btn" type="button">选择 PDF</button>
+          <div class="pane-title-wrap">
+            <span class="xl-pane-title">原文 (SOURCE)</span>
+            <span class="xl-pane-badge" id="pm-xl-src-badge">等待选择文档</span>
+          </div>
+          <div class="pane-actions">
+            <button class="xl-text-btn" id="pm-xl-pick-btn" type="button">上传 PDF / Word</button>
+          </div>
         </div>
 
         <div class="xl-pane-scroll" id="pm-xl-src-scroll">
-          <!-- 模式一：PDF 拖放区（未上传时） -->
+          <!-- 模式一：文件拖放区 -->
           <div class="xl-dropzone" id="pm-xl-drop">
             <div class="xl-drop-icon">
-              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="17 8 12 3 7 8"/>
                 <line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
             </div>
-            <div class="xl-drop-main">拖入 PDF 论文或点击选择文件</div>
-            <div class="xl-drop-sub">支持中英双栏论文，自动解析版面段落、标题与页码</div>
+            <div class="xl-drop-main">拖入 PDF 或 Word (.docx) 论文，或点击选择</div>
+            <div class="xl-drop-sub">支持数学公式保护、中英双栏论文、表格样式 1:1 对齐还原</div>
             <div class="xl-drop-tags">
-              <span>PDF 智能排版抽取</span>
-              <span>单双栏自适应</span>
-              <span>免上传云端 本地抽取</span>
+              <span>PDFMathTranslate 引擎</span>
+              <span>Word 样式零损生成</span>
+              <span>LaTeX 公式保护</span>
+              <span>双语逐段对齐</span>
             </div>
           </div>
 
-          <!-- 已加载的 PDF 文件信息卡片 -->
+          <!-- 已加载文档信息卡片 -->
           <div class="xl-file-card" id="pm-xl-file-card" style="display:none">
+            <div class="xl-file-icon" id="pm-xl-file-icon">📄</div>
             <div class="xl-file-info">
               <span class="xl-file-name" id="pm-xl-file-name">document.pdf</span>
-              <span class="xl-file-meta" id="pm-xl-file-meta">正在解析…</span>
+              <span class="xl-file-meta" id="pm-xl-file-meta">正在就绪…</span>
             </div>
-            <button class="xl-text-btn danger" id="pm-xl-reselect" type="button">重新选择</button>
+            <button class="xl-text-btn danger" id="pm-xl-reselect" type="button">更换文件</button>
           </div>
 
-          <!-- 模式二：文本输入区（粘贴模式或直接输入） -->
+          <!-- 模式二：馆藏文献选择器 -->
+          <div class="xl-paper-picker" id="pm-xl-paper-picker" style="display:none">
+            <div class="picker-label">请选择要载入翻译的馆藏文献：</div>
+            <select id="pm-xl-paper-select" class="picker-select"></select>
+            <button class="xl-btn sm primary" id="pm-xl-paper-load-btn" type="button">载入该文献</button>
+          </div>
+
+          <!-- 模式三：自由文本输入区 -->
           <div class="xl-paste-wrap" id="pm-xl-paste-wrap" style="display:none">
-            <textarea id="pm-xl-paste" placeholder="在此直接粘贴或输入需要翻译的论文段落、摘要或英文文本（段落间请保留空行）…"></textarea>
+            <textarea id="pm-xl-paste" placeholder="在此直接输入或粘贴含 LaTeX 公式（如 $E=mc^2$ 或 $$\int f(x)dx$$）的学术论文段落，将自动进行公式保护并翻译…"></textarea>
           </div>
 
-          <!-- 原文段落列表展示 -->
+          <!-- 原文段落列表展示（逐段严格编号，1:1 对齐） -->
           <div class="xl-list" id="pm-xl-src-list"></div>
         </div>
       </div>
 
-      <!-- 右栏：双语对照译文 -->
+      <!-- 右栏：译文 (TRANSLATION) -->
       <div class="xl-pane" id="pm-xl-right-pane">
         <div class="xl-pane-bar">
-          <span class="xl-pane-title">译文 (TRANSLATION)</span>
-          <span class="xl-pane-badge" id="pm-xl-dst-badge">等待翻译</span>
-          <button class="xl-text-btn" id="pm-xl-copy-all" type="button">复制全译文</button>
+          <div class="pane-title-wrap">
+            <span class="xl-pane-title">译文 (TRANSLATION)</span>
+            <span class="xl-pane-badge" id="pm-xl-dst-badge">等待翻译</span>
+          </div>
+          <div class="pane-actions">
+            <button class="xl-text-btn" id="pm-xl-copy-all" type="button">复制全译文</button>
+          </div>
         </div>
 
         <div class="xl-pane-scroll" id="pm-xl-dst-scroll">
           <!-- 空状态提示 -->
           <div class="xl-empty-view" id="pm-xl-dst-empty">
             <div class="xl-empty-icon">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="2" y1="12" x2="22" y2="12"/>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
             </div>
             <div class="xl-empty-title">等待翻译启动</div>
-            <div class="xl-empty-desc">在左侧选择 PDF 或粘贴文本后，点击顶部的「开始翻译」按钮，译文将分段同步在此呈现，支持双语并排对照阅读与一键导出 Markdown。</div>
+            <div class="xl-empty-desc">在左侧上传 PDF / Word 文档或选择馆藏文献，点击上方「开始翻译」。译文将保留原版排版、表格与公式符号，实现左右 1:1 精准对齐阅读，并支持一键下载双语文档！</div>
           </div>
 
-          <!-- 译文段落列表展示 -->
+          <!-- 译文段落列表展示（行号与左侧原文 100% 对应） -->
           <div class="xl-list" id="pm-xl-dst-list"></div>
+        </div>
+      </div>
+
+      <!-- 侧边折叠抽屉：多人协同研读讨论与批注 -->
+      <div class="xl-notes-drawer" id="pm-xl-notes-drawer" style="display:none;">
+        <div class="notes-header">
+          <span class="notes-title">💬 学术研读讨论与批注 (多人实时同步)</span>
+          <button class="notes-close" id="pm-xl-notes-close" type="button">✕</button>
+        </div>
+        <div class="notes-body" id="pm-xl-notes-list">
+          <div class="notes-empty">暂无批注，发表第一条研读心得吧！</div>
+        </div>
+        <div class="notes-footer">
+          <input type="text" id="pm-xl-note-input" placeholder="输入研读批注或讨论意见…" />
+          <button class="xl-btn sm primary" id="pm-xl-note-send" type="button">发送</button>
         </div>
       </div>
     </div>
 
-    <!-- 底部状态条与统计信息 -->
+    <!-- 底部状态条、统计与一键导出下载工具栏 -->
     <div class="xl-foot">
       <div class="xl-foot-status">
         <span class="xl-status-dot" id="pm-xl-status-dot"></span>
-        <span id="pm-xl-status">就绪</span>
+        <span id="pm-xl-status">工坊就绪</span>
       </div>
-      <div class="xl-foot-prog">
-        <div class="xl-prog-bar"><i id="pm-xl-prog"></i></div>
-        <span class="xl-prog-pct" id="pm-xl-pct">0%</span>
-      </div>
+
       <div class="xl-foot-stats">
-        <span id="pm-xl-count">0 段落</span>
-        <button class="xl-btn sm" id="pm-xl-export" type="button" disabled>
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          导出 Markdown
+        <span id="pm-xl-count">0 段落 / 0 页</span>
+      </div>
+
+      <!-- 格式级文档一键导出下载矩阵 -->
+      <div class="xl-foot-downloads">
+        <!-- Word 专属下载按钮 -->
+        <button class="xl-btn sm gold" id="pm-xl-dl-docx-dual" type="button" style="display:none;" title="下载原版样式的 1:1 双语对照 Word 文档">
+          📥 下载双语 Word (.docx)
+        </button>
+        <button class="xl-btn sm" id="pm-xl-dl-docx-mono" type="button" style="display:none;" title="下载原版样式的纯译文 Word 文档">
+          📄 下载纯译 Word (.docx)
+        </button>
+        <!-- PDF / 通用下载按钮 -->
+        <button class="xl-btn sm" id="pm-xl-print-pdf" type="button" disabled title="在新窗口以双语对照版面排版预览并打印/保存为 PDF">
+          🖨️ 导出/打印双语 PDF
+        </button>
+        <button class="xl-btn sm" id="pm-xl-export-md" type="button" disabled title="导出中英双语对照 Markdown 文档">
+          📝 导出双语 Markdown
         </button>
       </div>
     </div>
   </div>
 
-  <input type="file" id="pm-xl-file" accept="application/pdf" style="display:none">
+  <input type="file" id="pm-xl-file" accept="application/pdf,.docx,.doc" style="display:none">
+</div>
+
+<!-- 大模型 API 配置弹窗 -->
+<div id="pm-xl-api-modal" class="xl-modal-overlay" style="display:none;">
+  <div class="xl-modal-card">
+    <div class="xl-modal-title">
+      <span>⚙️ 学术大模型翻译配置 (DeepSeek / OpenAI)</span>
+      <button class="xl-modal-close" id="pm-xl-api-close" type="button">✕</button>
+    </div>
+    <div class="xl-modal-body">
+      <p class="xl-modal-tip">配置您的 API Key 后，系统将采用资深学术专家 Prompt 进行公式与术语级精译，数据不经任何第三方中转。</p>
+      <div class="xl-form-item">
+        <label>API Key:</label>
+        <input type="password" id="pm-api-key" placeholder="sk-..." />
+      </div>
+      <div class="xl-form-item">
+        <label>Base URL (可选):</label>
+        <input type="text" id="pm-api-base" placeholder="https://api.deepseek.com/v1 或官方 OpenAI 端点" />
+      </div>
+      <div class="xl-form-item">
+        <label>Model 名称:</label>
+        <input type="text" id="pm-api-model" placeholder="deepseek-chat / gpt-4o / etc." value="deepseek-chat" />
+      </div>
+    </div>
+    <div class="xl-modal-footer">
+      <button class="xl-btn" id="pm-api-cancel" type="button">取消</button>
+      <button class="xl-btn primary" id="pm-api-save" type="button">保存配置</button>
+    </div>
+  </div>
 </div>
