@@ -1,15 +1,16 @@
-# 论文期刊管理器 · Papers Manager — 1Panel / Docker 部署镜像
+# 论文期刊管理器 · Papers Manager —— 站点镜像
+# 内含单文件应用（html/）+ nginx 配置（conf.d/，含 /translate/ 反代 pdf2zh）
 FROM nginx:1.27-alpine
 
 LABEL org.opencontainers.image.title="papers-manager" \
-      org.opencontainers.image.description="论文期刊管理器 · Papers Manager (static web app with GitHub online update)" \
+      org.opencontainers.image.description="论文期刊管理器 · Papers Manager — 单文件论文库 + PDF 双语翻译入口" \
       org.opencontainers.image.licenses="MIT"
 
 # 站点文件（单文件应用 + 版本清单）
-COPY index.html version.json /usr/share/nginx/html/
+COPY html/ /usr/share/nginx/html/
 
-# nginx 配置（gzip / 缓存 / 健康检查）
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx 配置（gzip / 缓存 / 健康检查 / /translate/ 反代 pdf2zh:7860）
+COPY conf.d/ /etc/nginx/conf.d/
 
 EXPOSE 80
 
