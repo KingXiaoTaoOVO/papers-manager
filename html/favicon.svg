@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="p-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1c18"/>
+      <stop offset="100%" stop-color="#0c0b0a"/>
+    </linearGradient>
+    <linearGradient id="p-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d59e"/>
+      <stop offset="50%" stop-color="#c9a86a"/>
+      <stop offset="100%" stop-color="#8f7238"/>
+    </linearGradient>
+    <linearGradient id="p-sheet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d9d5cd"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#p-bg)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="url(#p-gold)" stroke-width="1.5" stroke-opacity="0.8"/>
+  <rect x="13" y="11" width="34" height="42" rx="3" fill="#2a2824" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="16" y="14" width="32" height="40" rx="3" fill="url(#p-sheet)" opacity="0.65"/>
+  <path d="M 19 17 L 37 17 L 46 26 L 46 51 C 46 52.1 45.1 53 44 53 L 19 53 C 17.9 53 17 52.1 17 51 L 17 19 C 17 17.9 17.9 17 19 17 Z" fill="url(#p-sheet)"/>
+  <path d="M 37 17 L 37 24 C 37 25.1 37.9 26 39 26 L 46 26 Z" fill="#c9a86a"/>
+  <line x1="23" y1="27" x2="33" y2="27" stroke="#1f1e1b" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="23" y1="33" x2="40" y2="33" stroke="#68645c" stroke-width="2" stroke-linecap="round"/>
+  <line x1="23" y1="38" x2="40" y2="38" stroke="#68645c" stroke-width="2" stroke-linecap="round"/>
+  <line x1="23" y1="43" x2="34" y2="43" stroke="#68645c" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="43" cy="45" r="5" fill="#141311" stroke="url(#p-gold)" stroke-width="1.5"/>
+  <path d="M 43 41.8 L 43.9 43.8 L 46 44.1 L 44.5 45.6 L 45 47.7 L 43 46.6 L 41 47.7 L 41.5 45.6 L 40 44.1 L 42.1 43.8 Z" fill="url(#p-gold)"/>
+</svg>

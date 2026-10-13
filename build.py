@@ -26,9 +26,12 @@ def read(p):
 def main():
     html = read(BASE)
 
-    favicon = ('<link rel="icon" href="data:image/svg+xml,'
-               '<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>'
-               '<text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">')
+    # 生成的高品质矢量图标（告别 emoji），支持深浅色浏览器标签页
+    favicon_svg = read(os.path.join(ROOT, "web", "html", "favicon.svg"))
+    import urllib.parse
+    favicon_uri = "data:image/svg+xml," + urllib.parse.quote(favicon_svg)
+    favicon = ('<link rel="icon" type="image/svg+xml" href="%s">\n'
+               '<link rel="alternate icon" href="favicon.svg">\n' % favicon_uri)
     meta = ('<meta name="description" content="论文期刊管理器 · Papers Manager — '
             '纯前端论文库索引与双语精读，内置 PDF 双语翻译，支持 1Panel / Docker 部署与 GitHub 在线更新。">'
             '<meta name="color-scheme" content="dark light">')

@@ -1,7 +1,7 @@
 {
-  "version": "5.1.0",
+  "version": "5.2.0",
   "build": "2026-10-13",
   "repo": "KingXiaoTaoOVO/papers-manager",
   "channel": "latest",
-  "note": "repo 字段填 GitHub 仓库（owner/repo），网站据此检测在线更新；翻译能力已内置在站点容器中（/api/translate，Bing 引擎），无需外部服务。"
+  "note": "v5.2.0：全面优化工作台界面与双语精读体验，替换为矢量论文图标（告别 emoji），内置 PDF 双语解析、自由文本与论文导入模式，完美适配 1Panel 容器一键部署与 GitHub 在线更新自动检测。"
 }

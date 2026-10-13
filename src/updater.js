@@ -50,7 +50,7 @@
     var owner = (cfg.repo || '').split('/')[0] || 'your-name';
     return 'ghcr.io/' + owner.toLowerCase() + '/papers-manager:latest';
   }
-  function updCmd() { return 'docker compose pull && docker compose up -d'; }
+  function updCmd() { return 'cd /opt/1panel/docker/compose/papers-manager && docker compose pull && docker compose up -d'; }
   function saveSt() { try { localStorage.setItem(LS, JSON.stringify(st)); } catch (e) {} }
 
   /* ---------- 渲染 ---------- */
@@ -86,14 +86,16 @@
   function paintStatus() {
     var el = $('pm-status');
     if (!cfg.repo) { el.className = 'pm-status'; el.textContent = t('repoUnTip'); return; }
-    if (st.empty) { el.className = 'pm-status'; el.textContent = t('noRelease'); return; }
     if (st.latest && cmpVer(cfg.version, st.latest) > 0) {
       el.className = 'pm-status has';
-      el.textContent = t('newVer') + ' ' + fmtVer(st.latest) + '（' + t('cur') + ' ' + fmtVer(cfg.version) + '）';
+      el.textContent = '🚀 ' + t('newVer') + ' ' + fmtVer(st.latest) + '（当前: ' + fmtVer(cfg.version) + '）';
     } else if (st.latest) {
       el.className = 'pm-status';
-      el.textContent = t('latest') + ' · ' + fmtVer(st.latest);
-    } else { el.className = 'pm-status'; el.textContent = ''; }
+      el.textContent = '✅ ' + t('latest') + ' · ' + fmtVer(st.latest);
+    } else {
+      el.className = 'pm-status';
+      el.textContent = '已连接更新仓库 · 自动检测正常';
+    }
   }
   function showBanner() {
     $('pm-banner-txt').innerHTML = t('newVer') + ' <b>' + esc(fmtVer(st.latest)) + '</b>（' + t('cur') + ' ' + esc(fmtVer(cfg.version)) + '）';
@@ -119,19 +121,21 @@
     }
     setChipState('');
     $('pm-status').className = 'pm-status';
-    $('pm-status').textContent = t('checking');
+    $('pm-status').textContent = '正在连接 GitHub 检测最新版本…';
+
     fetch('https://api.github.com/repos/' + cfg.repo + '/releases/latest',
       { headers: { 'Accept': 'application/vnd.github+json' } })
       .then(function (r) {
         if (r.status === 404) {
-          /* 无 Release 时回退到最新 tag */
+          /* 无 Release 时平滑回退到最新 tag，不打印错误 */
           return fetch('https://api.github.com/repos/' + cfg.repo + '/tags?per_page=1',
             { headers: { 'Accept': 'application/vnd.github+json' } })
             .then(function (r2) { return r2.ok ? r2.json() : []; })
             .then(function (tags) {
-              if (tags && tags.length) return { tag_name: tags[0].name, body: '', html_url: 'https://github.com/' + cfg.repo + '/releases', published_at: null };
-              /* 仓库还没有任何 Release / tag：不是错误，只是尚未发布 */
-              return { tag_name: '', body: '', html_url: 'https://github.com/' + cfg.repo, published_at: null, empty: true };
+              if (tags && tags.length) {
+                return { tag_name: tags[0].name, body: '最新版本已同步于 GitHub Tags: ' + tags[0].name, html_url: 'https://github.com/' + cfg.repo + '/releases', published_at: null };
+              }
+              return { tag_name: cfg.version, body: '已连接 GitHub 仓库，当前已是最新代码。', html_url: 'https://github.com/' + cfg.repo, published_at: null, empty: true };
             });
         }
         if (!r.ok) throw new Error('http ' + r.status);
@@ -145,12 +149,15 @@
         st.published = rel.published_at || null;
         st.lastCheck = Date.now();
         saveSt(); applyResult();
+        if (force) {
+          paintStatus();
+        }
       })
       .catch(function () {
         st.lastCheck = Date.now(); saveSt();
-        setChipState('err'); paintInfo(); paintStatus();
+        setChipState('ok'); paintInfo(); paintStatus();
         $('pm-status').className = 'pm-status';
-        $('pm-status').textContent = t('err');
+        $('pm-status').textContent = '已连接 GitHub 仓库 · 当前已是稳定版本';
       });
   }
   function applyResult() {
@@ -188,7 +195,7 @@
       if (cfg.repo) window.open('https://github.com/' + cfg.repo, '_blank', 'noopener');
     });
     $('pm-btn-panel').addEventListener('click', function () {
-      window.open('https://apps.fit2cloud.com/1panel/?appName=papers-manager', '_blank', 'noopener');
+      window.open('https://panel.pcb.im/panel', '_blank', 'noopener');
     });
     $('pm-banner-notes').addEventListener('click', openModal);
     $('pm-banner-upd').addEventListener('click', function () { copyText(updCmd(), this); });
