@@ -918,6 +918,43 @@
     initApiModal();
     initNotesDrawer();
     wireMainPaperCards();
+    mountTopbarItems();
+    for (var t = 200; t <= 3000; t += 400) {
+      setTimeout(mountTopbarItems, t);
+    }
+  }
+
+  function mountTopbarItems() {
+    var topbarRight = document.querySelector('.topbar-right');
+    if (!topbarRight) return;
+
+    var collabPill = $('pm-collab-pill');
+    var libChip = $('libChip');
+    if (collabPill && collabPill.parentNode !== topbarRight) {
+      if (libChip) {
+        topbarRight.insertBefore(collabPill, libChip);
+      } else {
+        topbarRight.insertBefore(collabPill, topbarRight.firstChild);
+      }
+    }
+
+    if (!$('topbar-xl-btn')) {
+      var impDrop = $('impDrop');
+      var btn = document.createElement('button');
+      btn.className = 'btn gold';
+      btn.id = 'topbar-xl-btn';
+      btn.type = 'button';
+      btn.title = 'AI 格式级全文档双语翻译工坊 (支持 PDF / Word)';
+      btn.innerHTML =
+        '<svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M4 5h7M7.5 5v1c0 4-1.5 8-4 11"/><path d="M5 12c2.5 3 5 4.5 8 5.5"/><path d="M13 20l3.5-8 3.5 8M14.2 17h4.6"/></svg>' +
+        '<span>全文档双语翻译</span>';
+      btn.onclick = openStudio;
+      if (impDrop) {
+        topbarRight.insertBefore(btn, impDrop);
+      } else {
+        topbarRight.appendChild(btn);
+      }
+    }
   }
 
   function setModeTab(mode) {
