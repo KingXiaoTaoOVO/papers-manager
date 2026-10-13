@@ -3485,7 +3485,8 @@ setTheme('dark');
 <!-- 顶栏多人在线研读学者胶囊 -->
 <div id="pm-collab-pill" title="多人在线研读协同（点击查看在线学者与讨论）">
   <span class="pulse-dot-online"></span>
-  <span class="pill-txt" id="pm-online-count">👥 1 位学者在线研读</span>
+  <svg class="xl-ic-pill" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  <span class="pill-txt" id="pm-online-count">1 位学者在线研读</span>
 </div>
 
 <div id="pm-xl" role="dialog" aria-modal="true" aria-label="学术文档双语翻译与精读工坊">
@@ -3523,7 +3524,9 @@ setTheme('dark');
             <option value="openai">OpenAI (GPT-4o/o3-mini)</option>
             <option value="google">Google 翻译</option>
           </select>
-          <button class="xl-icon-btn" id="pm-xl-api-btn" type="button" title="配置大模型 API Key 与自定义端点">⚙️</button>
+          <button class="xl-icon-btn" id="pm-xl-api-btn" type="button" title="配置大模型 API Key 与自定义端点">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
         </div>
 
         <!-- 输出模式：双语对照 vs 单语纯译 -->
@@ -3566,7 +3569,9 @@ setTheme('dark');
           开始翻译
         </button>
         <button class="xl-btn" id="pm-xl-stop" type="button" disabled>停止</button>
-        <button class="xl-btn close-btn" id="pm-xl-close" type="button" title="关闭 (Esc)">✕</button>
+        <button class="xl-btn close-btn" id="pm-xl-close" type="button" title="关闭 (Esc)">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
     </div>
 
@@ -3595,11 +3600,13 @@ setTheme('dark');
         </label>
         <!-- 团队共享云端成果指示 -->
         <span class="xl-shared-cloud-badge" id="pm-xl-cloud-status" style="display:none;">
-          ⚡ 云端已同步团队精译成果
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span id="pm-xl-cloud-txt">云端已同步团队精译成果</span>
         </span>
         <!-- 研读批注抽屉切换按钮 -->
         <button class="xl-text-btn" id="pm-xl-toggle-notes" type="button">
-          💬 研读讨论与批注 (<span id="pm-xl-notes-badge">0</span>)
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          研读讨论与批注 (<span id="pm-xl-notes-badge">0</span>)
         </button>
       </div>
     </div>
@@ -3656,7 +3663,9 @@ setTheme('dark');
 
           <!-- 已加载文档信息卡片 -->
           <div class="xl-file-card" id="pm-xl-file-card" style="display:none">
-            <div class="xl-file-icon" id="pm-xl-file-icon">📄</div>
+            <div class="xl-file-icon" id="pm-xl-file-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
             <div class="xl-file-info">
               <span class="xl-file-name" id="pm-xl-file-name">document.pdf</span>
               <span class="xl-file-meta" id="pm-xl-file-meta">正在就绪…</span>
@@ -3700,7 +3709,7 @@ setTheme('dark');
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
             </div>
             <div class="xl-empty-title">等待翻译启动</div>
@@ -3715,8 +3724,10 @@ setTheme('dark');
       <!-- 侧边折叠抽屉：多人协同研读讨论与批注 -->
       <div class="xl-notes-drawer" id="pm-xl-notes-drawer" style="display:none;">
         <div class="notes-header">
-          <span class="notes-title">💬 学术研读讨论与批注 (多人实时同步)</span>
-          <button class="notes-close" id="pm-xl-notes-close" type="button">✕</button>
+          <span class="notes-title">学术研读讨论与批注 (多人实时同步)</span>
+          <button class="notes-close" id="pm-xl-notes-close" type="button">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <div class="notes-body" id="pm-xl-notes-list">
           <div class="notes-empty">暂无批注，发表第一条研读心得吧！</div>
@@ -3743,17 +3754,21 @@ setTheme('dark');
       <div class="xl-foot-downloads">
         <!-- Word 专属下载按钮 -->
         <button class="xl-btn sm gold" id="pm-xl-dl-docx-dual" type="button" style="display:none;" title="下载原版样式的 1:1 双语对照 Word 文档">
-          📥 下载双语 Word (.docx)
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载双语 Word (.docx)
         </button>
         <button class="xl-btn sm" id="pm-xl-dl-docx-mono" type="button" style="display:none;" title="下载原版样式的纯译文 Word 文档">
-          📄 下载纯译 Word (.docx)
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          下载纯译 Word (.docx)
         </button>
         <!-- PDF / 通用下载按钮 -->
         <button class="xl-btn sm" id="pm-xl-print-pdf" type="button" disabled title="在新窗口以双语对照版面排版预览并打印/保存为 PDF">
-          🖨️ 导出/打印双语 PDF
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          导出/打印双语 PDF
         </button>
         <button class="xl-btn sm" id="pm-xl-export-md" type="button" disabled title="导出中英双语对照 Markdown 文档">
-          📝 导出双语 Markdown
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          导出双语 Markdown
         </button>
       </div>
     </div>
@@ -3766,8 +3781,10 @@ setTheme('dark');
 <div id="pm-xl-api-modal" class="xl-modal-overlay" style="display:none;">
   <div class="xl-modal-card">
     <div class="xl-modal-title">
-      <span>⚙️ 学术大模型翻译配置 (DeepSeek / OpenAI)</span>
-      <button class="xl-modal-close" id="pm-xl-api-close" type="button">✕</button>
+      <span>学术大模型翻译配置 (DeepSeek / OpenAI)</span>
+      <button class="xl-modal-close" id="pm-xl-api-close" type="button">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="xl-modal-body">
       <p class="xl-modal-tip">配置您的 API Key 后，系统将采用资深学术专家 Prompt 进行公式与术语级精译，数据不经任何第三方中转。</p>
@@ -3883,10 +3900,10 @@ setTheme('dark');
     if (!cfg.repo) { el.className = 'pm-status'; el.textContent = t('repoUnTip'); return; }
     if (st.latest && cmpVer(cfg.version, st.latest) > 0) {
       el.className = 'pm-status has';
-      el.textContent = '🚀 ' + t('newVer') + ' ' + fmtVer(st.latest) + '（当前: ' + fmtVer(cfg.version) + '）';
+      el.textContent = '[NEW] ' + t('newVer') + ' ' + fmtVer(st.latest) + '（当前: ' + fmtVer(cfg.version) + '）';
     } else if (st.latest) {
       el.className = 'pm-status';
-      el.textContent = '✅ ' + t('latest') + ' · ' + fmtVer(st.latest);
+      el.textContent = '[OK] ' + t('latest') + ' · ' + fmtVer(st.latest);
     } else {
       el.className = 'pm-status';
       el.textContent = '已连接更新仓库 · 自动检测正常';
@@ -4097,7 +4114,7 @@ setTheme('dark');
       if (data && data.online_count) {
         var pill = $('pm-online-count');
         if (pill) {
-          pill.textContent = '👥 ' + data.online_count + ' 位学者在线研读';
+          pill.textContent = data.online_count + ' 位学者在线研读';
         }
       }
     })
@@ -4335,14 +4352,14 @@ setTheme('dark');
     if (emptyView) emptyView.style.display = 'none';
 
     dstList.innerHTML =
-      '<div class="xl-item heading" style="margin-top:10px;">🎉 Word (.docx) 1:1 格式级翻译成功完成！</div>' +
+      '<div class="xl-item heading" style="margin-top:10px;">Word (.docx) 1:1 格式级翻译成功完成</div>' +
       '<div class="xl-item">' +
       '  <p><strong>成果特性：</strong></p>' +
       '  <p>• 完整保留全部标题级别、字体字号、粗斜体样式</p>' +
       '  <p>• 表格网格与单元格完全对齐还原，无格式塌陷</p>' +
       '  <p>• 共翻译重组了 <strong>' + (paraCount || 0) + '</strong> 个学术段落与表格单元</p>' +
       '  <div style="margin-top:14px; display:flex; gap:10px;">' +
-      '    <a class="xl-btn primary" href="' + dlUrl + '" download>📥 立即下载生成的 Word 文档</a>' +
+      '    <a class="xl-btn primary" href="' + dlUrl + '" download>下载生成的 Word 文档</a>' +
       '  </div>' +
       '</div>';
   }
@@ -4577,9 +4594,10 @@ setTheme('dark');
     })
     .then(function () {
       var badge = $('pm-xl-cloud-status');
-      if (badge) {
+      var txt = $('pm-xl-cloud-txt');
+      if (badge && txt) {
         badge.style.display = 'inline-flex';
-        badge.textContent = '⚡ 已同步至团队云端成果库';
+        txt.textContent = '已同步至团队云端成果库';
       }
     })
     .catch(function () {});
@@ -4593,9 +4611,10 @@ setTheme('dark');
         if (data && data.found && data.item) {
           var item = data.item;
           var badge = $('pm-xl-cloud-status');
-          if (badge) {
+          var txt = $('pm-xl-cloud-txt');
+          if (badge && txt) {
             badge.style.display = 'inline-flex';
-            badge.textContent = '⚡ 团队成员于 ' + item.time + ' 精译，已秒开同步';
+            txt.textContent = '团队成员于 ' + item.time + ' 精译，已秒开同步';
           }
           if (item.paras && item.trans) {
             state.paras = item.paras;
@@ -4738,7 +4757,7 @@ setTheme('dark');
         xlBtn.className = 'act xlate-btn';
         xlBtn.setAttribute('data-act', 'xlate');
         xlBtn.setAttribute('data-id', id);
-        xlBtn.innerHTML = '⚡ AI 双语精读';
+        xlBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:middle;margin-right:3px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI 双语精读';
         xlBtn.title = 'AI 格式级全文档双语翻译与精读 (保留公式与排版)';
         xlBtn.onclick = function (e) {
           e.stopPropagation();
@@ -4771,7 +4790,6 @@ setTheme('dark');
     var reader = new FileReader();
     if (ext === 'docx') {
       state.fileType = 'docx';
-      $('pm-xl-file-icon').textContent = '📘';
       $('pm-xl-engine-desc').textContent = 'Word 格式级 1:1 样式重构引擎 · 完整保留粗斜体与表格';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
@@ -4782,7 +4800,6 @@ setTheme('dark');
       reader.readAsArrayBuffer(file);
     } else {
       state.fileType = 'pdf';
-      $('pm-xl-file-icon').textContent = '📕';
       $('pm-xl-engine-desc').textContent = 'PDFMathTranslate 级版面保护 · LaTeX 公式与图表 1:1 对齐';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
@@ -4914,7 +4931,7 @@ setTheme('dark');
       downloadTextFile(md, (state.fileName || 'paper') + '_dual.md');
     };
 
-    // 导出/打印双语 PDF
+    // 导出/打印双语 PDF (安全拼接 script 标签，避免破坏外部 HTML 解析器)
     $('pm-xl-print-pdf').onclick = function () {
       var w = window.open('', '_blank');
       var html = '<!DOCTYPE html><html><head><title>' + escapeHtml(state.fileName) + ' - 双语对照</title>' +
@@ -4925,7 +4942,7 @@ setTheme('dark');
         html += '<div class="row"><div><div class="num">#' + p.id + ' 原文</div>' + escapeHtml(p.text) + '</div>' +
                 '<div><div class="num">#' + p.id + ' 译文</div>' + escapeHtml(tr) + '</div></div>';
       });
-      html += '<script>window.print();</script></body></html>';
+      html += '<' + 'script>window.print();<' + '/script></body></html>';
       w.document.write(html);
       w.document.close();
     };

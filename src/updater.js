@@ -88,10 +88,10 @@
     if (!cfg.repo) { el.className = 'pm-status'; el.textContent = t('repoUnTip'); return; }
     if (st.latest && cmpVer(cfg.version, st.latest) > 0) {
       el.className = 'pm-status has';
-      el.textContent = '🚀 ' + t('newVer') + ' ' + fmtVer(st.latest) + '（当前: ' + fmtVer(cfg.version) + '）';
+      el.textContent = '[NEW] ' + t('newVer') + ' ' + fmtVer(st.latest) + '（当前: ' + fmtVer(cfg.version) + '）';
     } else if (st.latest) {
       el.className = 'pm-status';
-      el.textContent = '✅ ' + t('latest') + ' · ' + fmtVer(st.latest);
+      el.textContent = '[OK] ' + t('latest') + ' · ' + fmtVer(st.latest);
     } else {
       el.className = 'pm-status';
       el.textContent = '已连接更新仓库 · 自动检测正常';

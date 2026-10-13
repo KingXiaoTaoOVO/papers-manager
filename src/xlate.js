@@ -66,7 +66,7 @@
       if (data && data.online_count) {
         var pill = $('pm-online-count');
         if (pill) {
-          pill.textContent = '👥 ' + data.online_count + ' 位学者在线研读';
+          pill.textContent = data.online_count + ' 位学者在线研读';
         }
       }
     })
@@ -304,14 +304,14 @@
     if (emptyView) emptyView.style.display = 'none';
 
     dstList.innerHTML =
-      '<div class="xl-item heading" style="margin-top:10px;">🎉 Word (.docx) 1:1 格式级翻译成功完成！</div>' +
+      '<div class="xl-item heading" style="margin-top:10px;">Word (.docx) 1:1 格式级翻译成功完成</div>' +
       '<div class="xl-item">' +
       '  <p><strong>成果特性：</strong></p>' +
       '  <p>• 完整保留全部标题级别、字体字号、粗斜体样式</p>' +
       '  <p>• 表格网格与单元格完全对齐还原，无格式塌陷</p>' +
       '  <p>• 共翻译重组了 <strong>' + (paraCount || 0) + '</strong> 个学术段落与表格单元</p>' +
       '  <div style="margin-top:14px; display:flex; gap:10px;">' +
-      '    <a class="xl-btn primary" href="' + dlUrl + '" download>📥 立即下载生成的 Word 文档</a>' +
+      '    <a class="xl-btn primary" href="' + dlUrl + '" download>下载生成的 Word 文档</a>' +
       '  </div>' +
       '</div>';
   }
@@ -546,9 +546,10 @@
     })
     .then(function () {
       var badge = $('pm-xl-cloud-status');
-      if (badge) {
+      var txt = $('pm-xl-cloud-txt');
+      if (badge && txt) {
         badge.style.display = 'inline-flex';
-        badge.textContent = '⚡ 已同步至团队云端成果库';
+        txt.textContent = '已同步至团队云端成果库';
       }
     })
     .catch(function () {});
@@ -562,9 +563,10 @@
         if (data && data.found && data.item) {
           var item = data.item;
           var badge = $('pm-xl-cloud-status');
-          if (badge) {
+          var txt = $('pm-xl-cloud-txt');
+          if (badge && txt) {
             badge.style.display = 'inline-flex';
-            badge.textContent = '⚡ 团队成员于 ' + item.time + ' 精译，已秒开同步';
+            txt.textContent = '团队成员于 ' + item.time + ' 精译，已秒开同步';
           }
           if (item.paras && item.trans) {
             state.paras = item.paras;
@@ -707,7 +709,7 @@
         xlBtn.className = 'act xlate-btn';
         xlBtn.setAttribute('data-act', 'xlate');
         xlBtn.setAttribute('data-id', id);
-        xlBtn.innerHTML = '⚡ AI 双语精读';
+        xlBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:middle;margin-right:3px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI 双语精读';
         xlBtn.title = 'AI 格式级全文档双语翻译与精读 (保留公式与排版)';
         xlBtn.onclick = function (e) {
           e.stopPropagation();
@@ -740,7 +742,6 @@
     var reader = new FileReader();
     if (ext === 'docx') {
       state.fileType = 'docx';
-      $('pm-xl-file-icon').textContent = '📘';
       $('pm-xl-engine-desc').textContent = 'Word 格式级 1:1 样式重构引擎 · 完整保留粗斜体与表格';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
@@ -751,7 +752,6 @@
       reader.readAsArrayBuffer(file);
     } else {
       state.fileType = 'pdf';
-      $('pm-xl-file-icon').textContent = '📕';
       $('pm-xl-engine-desc').textContent = 'PDFMathTranslate 级版面保护 · LaTeX 公式与图表 1:1 对齐';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
@@ -883,7 +883,7 @@
       downloadTextFile(md, (state.fileName || 'paper') + '_dual.md');
     };
 
-    // 导出/打印双语 PDF
+    // 导出/打印双语 PDF (安全拼接 script 标签，避免破坏外部 HTML 解析器)
     $('pm-xl-print-pdf').onclick = function () {
       var w = window.open('', '_blank');
       var html = '<!DOCTYPE html><html><head><title>' + escapeHtml(state.fileName) + ' - 双语对照</title>' +
@@ -894,7 +894,7 @@
         html += '<div class="row"><div><div class="num">#' + p.id + ' 原文</div>' + escapeHtml(p.text) + '</div>' +
                 '<div><div class="num">#' + p.id + ' 译文</div>' + escapeHtml(tr) + '</div></div>';
       });
-      html += '<script>window.print();</script></body></html>';
+      html += '<' + 'script>window.print();<' + '/script></body></html>';
       w.document.write(html);
       w.document.close();
     };
