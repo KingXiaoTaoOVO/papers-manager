@@ -1,0 +1,68 @@
+/* ===== 在线更新 / 部署信息面板（注入层，复用应用主题令牌） ===== */
+#pm-banner{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9992;
+  display:flex;align-items:center;gap:10px;max-width:min(92vw,640px);padding:10px 14px;border-radius:14px;
+  background:var(--popover,rgba(20,19,18,.96));border:1px solid var(--acc,rgba(201,168,106,.4));
+  box-shadow:0 12px 36px rgba(0,0,0,.35),0 0 0 1px rgba(201,168,106,.08);color:var(--fg);
+  font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;pointer-events:none;
+  transition:opacity .35s ease,transform .35s ease}
+#pm-banner.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+#pm-banner .pm-dot{width:8px;height:8px;border-radius:50%;background:var(--acc,#c9a86a);flex:none;
+  box-shadow:0 0 0 4px var(--accSoft,rgba(201,168,106,.16));animation:pmpulse 2.2s infinite}
+@keyframes pmpulse{0%,100%{box-shadow:0 0 0 4px var(--accSoft,rgba(201,168,106,.16))}50%{box-shadow:0 0 0 7px rgba(201,168,106,.05)}}
+#pm-banner .pm-txt{flex:1 1 auto;min-width:0}
+#pm-banner .pm-txt b{color:var(--acc,#c9a86a);font-weight:600}
+#pm-banner .pm-acts{display:flex;gap:6px;flex:none}
+.pm-btn{appearance:none;border:1px solid var(--stroke2,rgba(255,255,255,.16));background:var(--glass,rgba(255,255,255,.05));
+  color:var(--fg);border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer;white-space:nowrap;
+  transition:background .15s,border-color .15s}
+.pm-btn:hover{background:var(--accSoft,rgba(201,168,106,.14));border-color:var(--acc,#c9a86a)}
+.pm-btn.primary{background:var(--acc,#c9a86a);border-color:var(--acc,#c9a86a);color:var(--onAcc,#141311);font-weight:600}
+.pm-btn.primary:hover{filter:brightness(1.08)}
+.pm-btn.ghost{border-color:transparent;background:transparent;color:var(--dim)}
+.pm-btn.ghost:hover{color:var(--fg)}
+
+#pm-chip{position:fixed;right:16px;bottom:16px;z-index:9991;display:flex;align-items:center;gap:8px;
+  padding:7px 13px;border-radius:999px;background:var(--popover,rgba(20,19,18,.95));border:1px solid var(--stroke,rgba(255,255,255,.08));
+  box-shadow:var(--shadow,0 14px 40px rgba(0,0,0,.34));color:var(--fg);cursor:pointer;user-select:none;
+  font:12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .15s,transform .15s}
+#pm-chip:hover{border-color:var(--acc,#c9a86a);transform:translateY(-1px)}
+#pm-chip .pm-sdot{width:7px;height:7px;border-radius:50%;background:var(--dim2,#6f6c66);flex:none}
+#pm-chip.ok .pm-sdot{background:var(--ok,#5aa87e)}
+#pm-chip.new .pm-sdot{background:var(--acc,#c9a86a);animation:pmpulse 2.2s infinite}
+#pm-chip.err .pm-sdot{background:var(--err,#dd7c6c)}
+#pm-chip .pm-v{font-weight:600;letter-spacing:.02em}
+#pm-chip .pm-tag{color:var(--dim);font-size:11px}
+
+#pm-pop{position:fixed;right:16px;bottom:58px;z-index:9993;width:min(92vw,320px);border-radius:14px;
+  background:var(--popover,rgba(20,19,18,.97));border:1px solid var(--stroke,rgba(255,255,255,.08));
+  box-shadow:0 18px 50px rgba(0,0,0,.45);color:var(--fg);padding:14px 16px;display:none;
+  font:13px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#pm-pop.show{display:block;animation:pmPop .18s ease}
+@keyframes pmPop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#pm-pop h4{margin:0 0 10px;font-size:13px;color:var(--dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+#pm-pop .pm-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--stroke,rgba(255,255,255,.06))}
+#pm-pop .pm-row:last-of-type{border-bottom:none}
+#pm-pop .pm-k{color:var(--dim);flex:none}
+#pm-pop .pm-vv{text-align:right;word-break:break-all;font-variant-numeric:tabular-nums}
+#pm-pop .pm-vv code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11.5px;background:var(--code,rgba(0,0,0,.24));padding:2px 6px;border-radius:6px}
+#pm-pop .pm-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#pm-pop .pm-status{margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--glass,rgba(255,255,255,.04));
+  border:1px solid var(--stroke,rgba(255,255,255,.06));font-size:12px;color:var(--dim)}
+#pm-pop .pm-status.has{color:var(--acc,#c9a86a);border-color:rgba(201,168,106,.3)}
+
+#pm-modal{position:fixed;inset:0;z-index:9994;display:none;align-items:center;justify-content:center;
+  background:var(--scrim,rgba(7,6,6,.62));backdrop-filter:blur(4px);padding:20px}
+#pm-modal.show{display:flex}
+#pm-modal .pm-box{width:min(92vw,560px);max-height:80vh;overflow:auto;border-radius:16px;padding:22px 24px;
+  background:var(--popover,rgba(20,19,18,.97));border:1px solid var(--stroke,rgba(255,255,255,.09));
+  box-shadow:0 24px 70px rgba(0,0,0,.5);color:var(--fg);
+  font:13.5px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+#pm-modal .pm-box h3{margin:0 0 4px;font-size:17px}
+#pm-modal .pm-box .pm-sub{color:var(--dim);font-size:12px;margin-bottom:14px}
+#pm-modal .pm-notes{white-space:pre-wrap;word-break:break-word;background:var(--glass,rgba(255,255,255,.035));
+  border:1px solid var(--stroke,rgba(255,255,255,.06));border-radius:10px;padding:14px 16px;font-size:12.5px;color:var(--fg)}
+#pm-modal .pm-acts{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+@media (prefers-reduced-motion:reduce){#pm-banner,#pm-chip,#pm-pop,#pm-modal .pm-box{transition:none;animation:none}}

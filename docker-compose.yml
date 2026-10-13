@@ -1,0 +1,16 @@
+# 论文期刊管理器 · Papers Manager
+# 用法一：1Panel → 容器 → 编排 → 创建编排，粘贴本文件内容
+# 用法二：docker compose up -d
+services:
+  papers-manager:
+    image: ghcr.io/kingxiaotaovo/papers-manager:latest   # 推送 GitHub 后把 KingXiaoTaoOVO 替换为实际用户名/组织名
+    container_name: papers-manager
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3

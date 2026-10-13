@@ -1,0 +1,16 @@
+additionalProperties:
+  name: 论文期刊管理器
+  type: website
+  key: papers-manager
+  shortDescZh: 纯前端论文库索引与双语精读，内置 82 篇论文全文数据
+  shortDescEn: Client-side paper library index with bilingual reading, 82 papers bundled
+  tags:
+    - 工具
+    - 文档
+    - 阅读
+  website: https://papers.pcb.im
+  github: https://github.com/KingXiaoTaoOVO/papers-manager
+  version: 5.0
+  CrossVersionUpdate: false
+  Limit: 0
+  Recommend: 0

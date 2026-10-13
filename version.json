@@ -1,0 +1,7 @@
+{
+  "version": "5.0.0",
+  "build": "2026-10-13",
+  "repo": "KingXiaoTaoOVO/papers-manager",
+  "channel": "latest",
+  "note": "repo 字段填 GitHub 仓库（owner/repo），网站据此检测在线更新；留空则关闭更新检测。"
+}
