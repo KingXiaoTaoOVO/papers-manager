@@ -217,7 +217,7 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (c) {
         if (c) { cfg.version = c.version || 'dev'; cfg.build = c.build || ''; cfg.repo = c.repo || ''; }
-        paintInfo();
+        paintChrome();
         check(false);
       })
       .catch(function () { paintInfo(); });
