@@ -1,7 +1,7 @@
 /* ===== PDF 双语翻译入口：全屏内嵌 pdf2zh WebUI（/translate/）===== */
 (function () {
   'use strict';
-  var URL_DEFAULT = '/translate/';
+  var URL_DEFAULT = '/translator/';
   var url = URL_DEFAULT;
   var loaded = false;
 
