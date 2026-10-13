@@ -24,20 +24,51 @@
 
   function $(id) { return document.getElementById(id); }
 
-  // 客户端独立标识（多人协同）
-  var CLIENT_ID = localStorage.getItem('pm_client_id');
-  if (!CLIENT_ID) {
-    CLIENT_ID = 'user_' + Math.random().toString(36).substring(2, 10);
-    localStorage.setItem('pm_client_id', CLIENT_ID);
+  // 客户端稳定独立标识（支持 localStorage、Cookie 及浏览器硬件指纹兜底，保证同一设备刷新绝不变更）
+  function getStableClientId() {
+    try {
+      var cid = localStorage.getItem('pm_client_id');
+      if (cid && cid.length >= 6) return cid;
+    } catch (e) {}
+
+    var m = document.cookie.match(/(?:^|;\s*)pm_cid=([^;]+)/);
+    if (m && m[1]) {
+      try { localStorage.setItem('pm_client_id', m[1]); } catch (e) {}
+      return m[1];
+    }
+
+    // 基于浏览器环境与硬件特征计算稳定的确定性哈希
+    var raw = [
+      navigator.userAgent,
+      screen.width,
+      screen.height,
+      screen.colorDepth,
+      navigator.language,
+      navigator.hardwareConcurrency || 4
+    ].join('|');
+    var hash = 0;
+    for (var i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+      hash |= 0;
+    }
+    var id = 'usr_' + Math.abs(hash).toString(36);
+    try {
+      localStorage.setItem('pm_client_id', id);
+      document.cookie = 'pm_cid=' + id + '; path=/; max-age=31536000; SameSite=Lax';
+    } catch (e) {}
+    return id;
   }
+
+  var CLIENT_ID = getStableClientId();
 
   var state = {
     mode: 'doc',           // 'doc' | 'paper' | 'paste'
+    viewMode: 'visual',    // 'visual' (视觉排版原貌) | 'dual' (逐段对齐精读)
     outputMode: 'dual',    // 'dual' | 'mono'
     fileType: '',          // 'pdf' | 'docx' | 'text' | 'paper'
     fileName: '',
     fileSize: 0,
-    fileBytes: null,       // Uint8Array / Base64
+    fileBytes: null,       // Uint8Array / Base64 / ArrayBuffer
     activePaperKey: '',
     paras: [],             // [{ id: 1, text: '...', page: 1, isHeading: false, isMath: false }]
     trans: [],             // [{ id: 1, text: '...' }]
@@ -45,11 +76,16 @@
     stop: false,
     docxDownloadUrl: '',
     docxBase64: '',
-    notes: []
+    notes: [],
+    // 视觉排版预览控制
+    pdfDoc: null,
+    currentPage: 1,
+    totalPages: 1,
+    zoomScale: 1.0
   };
 
   /* ==============================================================================
-     1. 多人在线协同状态与心跳机制 (Presence)
+     1. 多人在线协同状态与心跳机制 (Presence，真实学者强去重)
      ============================================================================== */
   function sendPresenceHeartbeat() {
     fetch(API_PRESENCE, {
@@ -63,7 +99,7 @@
     })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      if (data && data.online_count) {
+      if (data && typeof data.online_count !== 'undefined') {
         var pill = $('pm-online-count');
         if (pill) {
           pill.textContent = data.online_count + ' 位学者在线研读';
@@ -73,9 +109,16 @@
     .catch(function () {});
   }
 
-  // 每 25 秒自动发送心跳
-  setInterval(sendPresenceHeartbeat, 25000);
-  setTimeout(sendPresenceHeartbeat, 1500);
+  // 页面卸载或关闭时，发送 leave 告知服务端释放会话
+  window.addEventListener('beforeunload', function () {
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/collab/leave', JSON.stringify({ clientId: CLIENT_ID }));
+    }
+  });
+
+  // 每 15 秒自动发送心跳（服务端 35 秒超时兜底）
+  setInterval(sendPresenceHeartbeat, 15000);
+  setTimeout(sendPresenceHeartbeat, 600);
 
   /* ==============================================================================
      2. 语言与下拉框初始化
@@ -144,8 +187,215 @@
   }
 
   /* ==============================================================================
-     4. 文档解析与段落抽取（PDF 与 Word 原生）
+     4. 文档解析与视觉排版渲染引擎（PDF & Word 原版浏览）
      ============================================================================== */
+  var JSZIP_SRC = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+  var DOCX_PREVIEW_SRC = 'https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js';
+
+  function loadDocxPreview() {
+    return new Promise(function (resolve, reject) {
+      if (window.docx && window.JSZip) return resolve(window.docx);
+
+      function loadScript(src) {
+        return new Promise(function (res, rej) {
+          var s = document.createElement('script');
+          s.src = src;
+          s.onload = res;
+          s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+
+      loadScript(JSZIP_SRC)
+        .then(function () { return loadScript(DOCX_PREVIEW_SRC); })
+        .then(function () {
+          if (window.docx) resolve(window.docx);
+          else reject(new Error('docx-preview 加载失败'));
+        })
+        .catch(function (e) {
+          reject(new Error('docx-preview 加载异常: ' + e.message));
+        });
+    });
+  }
+
+  function base64ToArrayBuffer(base64) {
+    var binaryString = window.atob(base64);
+    var len = binaryString.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function updateZoomText() {
+    var el = $('pm-xl-zoom-val');
+    if (el) el.textContent = Math.round(state.zoomScale * 100) + '%';
+  }
+
+  function renderPdfPage(pageNo) {
+    if (!state.pdfDoc) return;
+    if (pageNo < 1) pageNo = 1;
+    if (pageNo > state.totalPages) pageNo = state.totalPages;
+    state.currentPage = pageNo;
+
+    var curInput = $('pm-xl-page-cur');
+    if (curInput) curInput.value = pageNo;
+
+    var prevBtn = $('pm-xl-page-prev');
+    var nextBtn = $('pm-xl-page-next');
+    if (prevBtn) prevBtn.disabled = pageNo <= 1;
+    if (nextBtn) nextBtn.disabled = pageNo >= state.totalPages;
+
+    // 渲染左侧 Canvas 原版 PDF
+    state.pdfDoc.getPage(pageNo).then(function (page) {
+      var canvas = $('pm-xl-src-pdf-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var scale = state.zoomScale * 1.5;
+      var viewport = page.getViewport({ scale: scale });
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      canvas.style.width = Math.round(viewport.width / 1.5) + 'px';
+      canvas.style.height = Math.round(viewport.height / 1.5) + 'px';
+
+      page.render({ canvasContext: ctx, viewport: viewport });
+    });
+
+    // 渲染右侧译文视觉版面
+    renderTranslatedPdfPage(pageNo);
+  }
+
+  function renderTranslatedPdfPage(pageNo) {
+    var placeholder = $('pm-xl-dst-pdf-placeholder');
+    var sheet = $('pm-xl-dst-pdf-sheet');
+    var pageBadge = $('pm-xl-sheet-page');
+    var titleEl = $('pm-xl-sheet-title');
+    var contentEl = $('pm-xl-sheet-content');
+
+    if (pageBadge) pageBadge.textContent = 'Page ' + pageNo + ' / ' + state.totalPages;
+    if (titleEl) titleEl.textContent = state.fileName ? state.fileName.toUpperCase() : 'TRANSLATION PREVIEW';
+
+    var pageParas = state.paras.filter(function (p) { return p.page === pageNo; });
+    if (!pageParas.length) {
+      var perPage = Math.max(1, Math.ceil(state.paras.length / (state.totalPages || 1)));
+      var start = (pageNo - 1) * perPage;
+      pageParas = state.paras.slice(start, start + perPage);
+    }
+
+    var hasAnyTrans = pageParas.some(function (p) {
+      var tr = state.trans.find(function (t) { return t.id === p.id; });
+      return tr && tr.text && tr.text.trim();
+    });
+
+    if (!hasAnyTrans && !state.running) {
+      if (placeholder) placeholder.style.display = 'flex';
+      if (sheet) sheet.style.display = 'none';
+      return;
+    }
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (sheet) sheet.style.display = 'flex';
+
+    if (contentEl) {
+      var html = '';
+      pageParas.forEach(function (p) {
+        var tr = state.trans.find(function (t) { return t.id === p.id; });
+        var transText = (tr && tr.text) || '<span style="opacity:0.35;">(正在翻译此段...)</span>';
+        if (p.isHeading) {
+          html += '<div class="sheet-heading">' + escapeHtml(transText) + '</div>';
+        } else if (state.outputMode === 'dual') {
+          html += '<div class="sheet-dual-block">' +
+                  '  <div class="sheet-dual-src">#' + p.id + ' ' + escapeHtml(p.text) + '</div>' +
+                  '  <div class="sheet-dual-dst">' + escapeHtml(transText) + '</div>' +
+                  '</div>';
+        } else {
+          html += '<div class="sheet-para">' + escapeHtml(transText) + '</div>';
+        }
+      });
+      contentEl.innerHTML = html || '<div style="color:#999;text-align:center;padding:40px;">当前页无文字内容</div>';
+    }
+  }
+
+  function renderWordOriginalView(fileBytes) {
+    var box = $('pm-xl-src-docx-box');
+    if (!box) return;
+    box.innerHTML = '<div style="color:#c9a86a;padding:30px;font-size:12px;">正在解析 Word 原文排版与表格结构…</div>';
+
+    loadDocxPreview().then(function (docxLib) {
+      box.innerHTML = '';
+      docxLib.renderAsync(fileBytes, box, null, {
+        className: 'docx',
+        inWrapper: true,
+        ignoreWidth: false,
+        ignoreHeight: false
+      }).catch(function (err) {
+        box.innerHTML = '<div style="padding:20px;color:#cfcac0;">Word 预览解析提示: ' + escapeHtml(err.message) + '</div>';
+      });
+    }).catch(function () {
+      box.innerHTML = '<div class="sheet-heading">Word 原文文档预览</div>' +
+                      '<div style="color:#cfcac0;padding:20px;">Word 文档已就绪，点击「开始翻译」即可执行 1:1 格式级重构！</div>';
+    });
+  }
+
+  function renderWordTranslatedView(translatedBytes) {
+    var placeholder = $('pm-xl-dst-docx-placeholder');
+    var renderedView = $('pm-xl-dst-docx-rendered');
+    if (placeholder) placeholder.style.display = 'none';
+    if (renderedView) {
+      renderedView.style.display = 'block';
+      renderedView.innerHTML = '<div style="color:#c9a86a;padding:30px;font-size:12px;">正在渲染 1:1 重构后的 Word 译文排版…</div>';
+
+      loadDocxPreview().then(function (docxLib) {
+        renderedView.innerHTML = '';
+        docxLib.renderAsync(translatedBytes, renderedView, null, {
+          className: 'docx',
+          inWrapper: true,
+          ignoreWidth: false,
+          ignoreHeight: false
+        }).catch(function (err) {
+          renderedView.innerHTML = '<div style="padding:20px;color:#cfcac0;">译文渲染提示: ' + escapeHtml(err.message) + '</div>';
+        });
+      }).catch(function () {
+        renderedView.innerHTML = '<div class="sheet-heading">Word 译文已重构完成</div>' +
+                                 '<div style="color:#cfcac0;padding:20px;">可在下方点击下载 1:1 双语或纯译 Word 文档。</div>';
+      });
+    }
+  }
+
+  function setViewMode(vmode) {
+    state.viewMode = vmode;
+    var btnVisual = $('pm-xl-view-visual');
+    var btnDual = $('pm-xl-view-dual');
+    var srcWrap = $('pm-xl-src-visual-wrap');
+    var dstWrap = $('pm-xl-dst-visual-wrap');
+    var srcList = $('pm-xl-src-list');
+    var dstList = $('pm-xl-dst-list');
+    var docToolbar = $('pm-xl-doc-toolbar');
+
+    if (btnVisual) btnVisual.className = 'xl-view-btn' + (vmode === 'visual' ? ' active' : '');
+    if (btnDual) btnDual.className = 'xl-view-btn' + (vmode === 'dual' ? ' active' : '');
+
+    if (vmode === 'visual') {
+      if (srcWrap) srcWrap.style.display = 'flex';
+      if (dstWrap) dstWrap.style.display = 'flex';
+      if (srcList) srcList.style.display = 'none';
+      if (dstList) dstList.style.display = 'none';
+      if (docToolbar) docToolbar.style.display = (state.fileType === 'pdf') ? 'flex' : 'none';
+      if (state.fileType === 'pdf' && state.pdfDoc) {
+        renderPdfPage(state.currentPage);
+      }
+    } else {
+      if (srcWrap) srcWrap.style.display = 'none';
+      if (dstWrap) dstWrap.style.display = 'none';
+      if (srcList) srcList.style.display = 'block';
+      if (dstList) dstList.style.display = 'block';
+      if (docToolbar) docToolbar.style.display = 'none';
+      renderParas();
+    }
+  }
+
   function loadPdfjs() {
     return new Promise(function (resolve, reject) {
       if (window.pdfjsLib) {
@@ -284,6 +534,12 @@
       state.docxDownloadUrl = data.downloadUrl;
       state.docxBase64 = data.fileBase64;
 
+      // 实时将生成的 1:1 Word 文档渲染至右侧视觉预览容器
+      if (data.fileBase64) {
+        var transBuf = base64ToArrayBuffer(data.fileBase64);
+        renderWordTranslatedView(transBuf);
+      }
+
       updatePipelineStep(5);
       updateStatus('Word 格式级翻译完成！保留全部字体与表格，已就绪供下载');
       $('pm-xl-status-dot').className = 'xl-status-dot';
@@ -371,6 +627,11 @@
     if (el) {
       var txtEl = el.querySelector('.xl-item-text');
       if (txtEl) txtEl.innerHTML = escapeHtml(text);
+    }
+
+    // 实时更新视觉排版右栏当前页译文
+    if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+      renderTranslatedPdfPage(state.currentPage);
     }
   }
 
@@ -745,8 +1006,18 @@
       $('pm-xl-engine-desc').textContent = 'Word 格式级 1:1 样式重构引擎 · 完整保留粗斜体与表格';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
-        updateStatus('Word 文档就绪，点击「开始翻译」即可生成 1:1 双语/单语 Word');
+        updateStatus('Word 原文已视觉排版就绪，点击「开始翻译」即可执行 1:1 格式级重构');
         $('pm-xl-run').disabled = false;
+
+        $('pm-xl-src-pdf-box').style.display = 'none';
+        $('pm-xl-src-docx-box').style.display = 'flex';
+        $('pm-xl-dst-pdf-box').style.display = 'none';
+        $('pm-xl-dst-docx-box').style.display = 'flex';
+        var empty = $('pm-xl-dst-empty');
+        if (empty) empty.style.display = 'none';
+
+        setViewMode('visual');
+        renderWordOriginalView(state.fileBytes);
         checkCloudSharedCache(state.activePaperKey);
       };
       reader.readAsArrayBuffer(file);
@@ -756,11 +1027,29 @@
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
         loadPdfjs().then(function (pdfjs) {
+          return pdfjs.getDocument({ data: state.fileBytes }).promise;
+        }).then(function (pdfDoc) {
+          state.pdfDoc = pdfDoc;
+          state.totalPages = pdfDoc.numPages;
+          state.currentPage = 1;
+          var totalEl = $('pm-xl-page-total');
+          if (totalEl) totalEl.textContent = state.totalPages;
+
+          $('pm-xl-src-pdf-box').style.display = 'flex';
+          $('pm-xl-src-docx-box').style.display = 'none';
+          $('pm-xl-dst-pdf-box').style.display = 'flex';
+          $('pm-xl-dst-docx-box').style.display = 'none';
+          var empty = $('pm-xl-dst-empty');
+          if (empty) empty.style.display = 'none';
+
+          setViewMode('visual');
+          renderPdfPage(1);
+
           var pagesVal = ($('pm-xl-pages').value || '').trim();
-          extractPdfParas(pdfjs, state.fileBytes, pagesVal).then(function (paras) {
+          extractPdfParas(window.pdfjsLib, state.fileBytes, pagesVal).then(function (paras) {
             state.paras = paras;
             renderParas();
-            updateStatus('PDF 解析就绪，共提取 ' + paras.length + ' 个学术段落');
+            updateStatus('PDF 解析就绪，共 ' + state.totalPages + ' 页 / ' + paras.length + ' 个学术段落');
             $('pm-xl-run').disabled = false;
             checkCloudSharedCache(state.activePaperKey);
           });
@@ -787,7 +1076,26 @@
 
     if (pickBtn) pickBtn.onclick = function () { fileInput.click(); };
     if (dropZone) dropZone.onclick = function () { fileInput.click(); };
-    if (reselectBtn) reselectBtn.onclick = function () { fileInput.click(); };
+
+    if (reselectBtn) {
+      reselectBtn.onclick = function () {
+        $('pm-xl-file-card').style.display = 'none';
+        $('pm-xl-drop').style.display = 'block';
+        $('pm-xl-src-visual-wrap').style.display = 'none';
+        $('pm-xl-dst-visual-wrap').style.display = 'none';
+        $('pm-xl-doc-toolbar').style.display = 'none';
+        $('pm-xl-src-list').innerHTML = '';
+        $('pm-xl-dst-list').innerHTML = '';
+        var empty = $('pm-xl-dst-empty');
+        if (empty) empty.style.display = 'block';
+        $('pm-xl-run').disabled = true;
+        state.fileBytes = null;
+        state.pdfDoc = null;
+        state.paras = [];
+        state.trans = [];
+        fileInput.value = '';
+      };
+    }
 
     if (fileInput) {
       fileInput.onchange = function (e) {
@@ -806,12 +1114,61 @@
       };
     }
 
+    // 视图模式切换 (文档视觉排版浏览 vs 双语逐段对齐精读)
+    var viewVisualBtn = $('pm-xl-view-visual');
+    var viewDualBtn = $('pm-xl-view-dual');
+    if (viewVisualBtn) viewVisualBtn.onclick = function () { setViewMode('visual'); };
+    if (viewDualBtn) viewDualBtn.onclick = function () { setViewMode('dual'); };
+
+    // PDF 控制工具条
+    var pagePrev = $('pm-xl-page-prev');
+    var pageNext = $('pm-xl-page-next');
+    var pageCur = $('pm-xl-page-cur');
+    var zoomIn = $('pm-xl-zoom-in');
+    var zoomOut = $('pm-xl-zoom-out');
+    var zoomFit = $('pm-xl-zoom-fit');
+
+    if (pagePrev) pagePrev.onclick = function () {
+      if (state.currentPage > 1) renderPdfPage(state.currentPage - 1);
+    };
+    if (pageNext) pageNext.onclick = function () {
+      if (state.currentPage < state.totalPages) renderPdfPage(state.currentPage + 1);
+    };
+    if (pageCur) {
+      pageCur.onchange = function () {
+        var p = parseInt(pageCur.value, 10);
+        if (!isNaN(p)) renderPdfPage(p);
+      };
+    }
+    if (zoomIn) {
+      zoomIn.onclick = function () {
+        state.zoomScale = Math.min(2.5, state.zoomScale + 0.15);
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+    if (zoomOut) {
+      zoomOut.onclick = function () {
+        state.zoomScale = Math.max(0.6, state.zoomScale - 0.15);
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+    if (zoomFit) {
+      zoomFit.onclick = function () {
+        state.zoomScale = 1.0;
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+
     // 模式选择 Tabs
     $('pm-xl-tab-doc').onclick = function () {
       setModeTab('doc');
-      $('pm-xl-drop').style.display = state.paras.length ? 'none' : 'block';
+      $('pm-xl-drop').style.display = state.paras.length || state.fileBytes ? 'none' : 'block';
       $('pm-xl-paper-picker').style.display = 'none';
       $('pm-xl-paste-wrap').style.display = 'none';
+      if (state.viewMode === 'visual') setViewMode('visual');
     };
     $('pm-xl-tab-paper').onclick = function () {
       setModeTab('paper');
@@ -825,6 +1182,7 @@
       $('pm-xl-drop').style.display = 'none';
       $('pm-xl-paper-picker').style.display = 'none';
       $('pm-xl-paste-wrap').style.display = 'block';
+      setViewMode('dual');
     };
 
     $('pm-xl-paper-load-btn').onclick = function () {
@@ -840,11 +1198,17 @@
       dualPill.className = 'xl-pill active';
       monoPill.className = 'xl-pill';
       state.outputMode = 'dual';
+      if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        renderTranslatedPdfPage(state.currentPage);
+      }
     };
     monoPill.onclick = function () {
       monoPill.className = 'xl-pill active';
       dualPill.className = 'xl-pill';
       state.outputMode = 'mono';
+      if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        renderTranslatedPdfPage(state.currentPage);
+      }
     };
 
     // 自由文本输入解析
@@ -870,6 +1234,20 @@
       $('pm-xl-run').disabled = false;
       $('pm-xl-stop').disabled = true;
     };
+
+    // 下载 Word 双语与纯译按钮
+    var dlDocxDual = $('pm-xl-dl-docx-dual');
+    var dlDocxMono = $('pm-xl-dl-docx-mono');
+    if (dlDocxDual) {
+      dlDocxDual.onclick = function () {
+        if (state.docxDownloadUrl) window.location.href = state.docxDownloadUrl;
+      };
+    }
+    if (dlDocxMono) {
+      dlDocxMono.onclick = function () {
+        if (state.docxDownloadUrl) window.location.href = state.docxDownloadUrl;
+      };
+    }
 
     // 导出 Markdown
     $('pm-xl-export-md').onclick = function () {
@@ -898,6 +1276,20 @@
       w.document.write(html);
       w.document.close();
     };
+
+    // 快捷键支持：翻页与 Esc 关闭
+    document.addEventListener('keydown', function (e) {
+      if (!$('pm-xl').classList.contains('open')) return;
+      if (e.key === 'Escape') {
+        closeStudio();
+      } else if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          if (state.currentPage > 1) renderPdfPage(state.currentPage - 1);
+        } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          if (state.currentPage < state.totalPages) renderPdfPage(state.currentPage + 1);
+        }
+      }
+    });
 
     // 复制全译文
     $('pm-xl-copy-all').onclick = function () {

@@ -1565,6 +1565,290 @@ details summary:hover{color:var(--acc)}
   box-shadow: 0 2px 10px rgba(201, 168, 106, 0.25);
 }
 
+/* ===== 文档视觉排版浏览模式与控制条 (v5.3.1) ===== */
+.xl-view-modes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.xl-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-family: inherit;
+  color: #9a978f;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.xl-view-btn:hover {
+  color: #eae8e4;
+  background: rgba(255, 255, 255, 0.05);
+}
+.xl-view-btn.active {
+  color: #c9a86a;
+  background: rgba(201, 168, 106, 0.14);
+  border-color: rgba(201, 168, 106, 0.35);
+  font-weight: 500;
+}
+
+/* 文档控制工具条 */
+.xl-doc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: #141311;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11.5px;
+  color: #9a978f;
+  user-select: none;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.doc-tool-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  height: 26px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #cfcac0;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.doc-tool-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #eae8e4;
+  border-color: rgba(201, 168, 106, 0.3);
+}
+.doc-tool-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.doc-tool-btn.icon-only {
+  padding: 0 6px;
+}
+.doc-page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #b5afa3;
+}
+.doc-page-indicator input {
+  width: 42px;
+  height: 24px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: #eae8e4;
+  font-size: 12px;
+  outline: none;
+}
+.doc-page-indicator input:focus {
+  border-color: #c9a86a;
+}
+.doc-zoom-txt {
+  font-size: 11.5px;
+  color: #c9a86a;
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 视觉排版容器与纸质呈现 */
+.xl-visual-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+}
+.xl-pdf-render-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.xl-pdf-render-box canvas {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  background: #ffffff;
+  transition: transform 0.15s ease;
+}
+
+/* Word (.docx) docx-preview 容器样式 */
+.xl-docx-render-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.xl-docx-render-box .docx-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.xl-docx-render-box .docx {
+  background: #ffffff !important;
+  color: #222222 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  margin-bottom: 24px !important;
+  border-radius: 4px !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* 占位与等待引导卡片 */
+.xl-visual-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  margin: 30px auto;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(201, 168, 106, 0.28);
+  border-radius: 12px;
+  color: #9a978f;
+}
+.xl-visual-placeholder svg {
+  color: #c9a86a;
+  margin-bottom: 12px;
+}
+.xl-visual-placeholder .pl-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #eae8e4;
+  margin-bottom: 6px;
+}
+.xl-visual-placeholder .pl-sub {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #9a978f;
+}
+
+/* 译文学术 A4 纸张排版呈现 */
+.xl-paper-sheet {
+  width: 100%;
+  max-width: 780px;
+  min-height: 860px;
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 40px 48px;
+  box-sizing: border-box;
+  font-family: 'Times New Roman', 'Source Serif 4', 'Songti SC', 'SimSun', serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.xl-paper-sheet .sheet-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  font-size: 10.5px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+}
+.xl-paper-sheet .sheet-content {
+  flex: 1;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.xl-paper-sheet .sheet-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  color: #111;
+}
+.xl-paper-sheet .sheet-abstract {
+  background: #f7f6f3;
+  border-left: 3px solid #c9a86a;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.xl-paper-sheet .sheet-heading {
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  color: #222;
+}
+.xl-paper-sheet .sheet-para {
+  margin-bottom: 12px;
+  text-align: justify;
+  text-indent: 2em;
+}
+.xl-paper-sheet .sheet-dual-block {
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  background: #faf9f6;
+  border-radius: 4px;
+  border-left: 2px solid #5aa87e;
+}
+.xl-paper-sheet .sheet-dual-src {
+  font-size: 11.5px;
+  color: #777;
+  margin-bottom: 4px;
+  font-family: sans-serif;
+}
+.xl-paper-sheet .sheet-dual-dst {
+  font-size: 13px;
+  color: #111;
+  font-weight: 500;
+}
+.xl-paper-sheet .sheet-footer {
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+  margin-top: 24px;
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+}
+
 </style>
 </head>
 <body>
@@ -3643,14 +3927,26 @@ setTheme('dark');
           从馆藏文献载入
         </button>
         <button class="xl-tab" id="pm-xl-tab-paste" type="button">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           公式与自由文本翻译
+        </button>
+      </div>
+
+      <!-- 视图模式切换器：文档视觉排版浏览 vs 双语逐段对齐精读 -->
+      <div class="xl-view-modes">
+        <button class="xl-view-btn active" id="pm-xl-view-visual" type="button" title="视觉排版原貌浏览（左右并排查看原文与译文文档真实排版）">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          文档视觉排版浏览
+        </button>
+        <button class="xl-view-btn" id="pm-xl-view-dual" type="button" title="双语逐段对齐精读（逐段 1:1 对照阅读与公式查看）">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          双语逐段对齐精读
         </button>
       </div>
 
       <div class="xl-quick-tools">
         <!-- 联动滚动开关 -->
-        <label class="xl-toggle-label" title="开启后左右两栏滚动与翻页联动">
+        <label class="xl-toggle-label" title="开启后左右两栏滚动联动">
           <input type="checkbox" id="pm-xl-sync-scroll" checked>
           <span>左右联动滚动</span>
         </label>
@@ -3664,6 +3960,43 @@ setTheme('dark');
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           研读讨论与批注 (<span id="pm-xl-notes-badge">0</span>)
         </button>
+      </div>
+    </div>
+
+    <!-- 文档视觉浏览控制条（翻页、缩放、适应宽度） -->
+    <div class="xl-doc-toolbar" id="pm-xl-doc-toolbar" style="display:none;">
+      <div class="doc-tool-group">
+        <button class="doc-tool-btn" id="pm-xl-page-prev" type="button" title="上一页 (Page Up / ←)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          上一页
+        </button>
+        <div class="doc-page-indicator">
+          <span>第</span>
+          <input type="number" id="pm-xl-page-cur" value="1" min="1" max="1" />
+          <span>/ <span id="pm-xl-page-total">1</span> 页</span>
+        </div>
+        <button class="doc-tool-btn" id="pm-xl-page-next" type="button" title="下一页 (Page Down / →)">
+          下一页
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="doc-tool-group">
+        <button class="doc-tool-btn icon-only" id="pm-xl-zoom-out" type="button" title="缩小 (-)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <span class="doc-zoom-txt" id="pm-xl-zoom-val">100%</span>
+        <button class="doc-tool-btn icon-only" id="pm-xl-zoom-in" type="button" title="放大 (+)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <button class="doc-tool-btn" id="pm-xl-zoom-fit" type="button" title="自适应窗口宽度">自适应宽度</button>
+      </div>
+
+      <div class="doc-tool-group">
+        <label class="xl-toggle-label" title="开启后左右两栏同步翻页">
+          <input type="checkbox" id="pm-xl-sync-page" checked>
+          <span>左右同步翻页</span>
+        </label>
       </div>
     </div>
 
@@ -3741,6 +4074,16 @@ setTheme('dark');
             <textarea id="pm-xl-paste" placeholder="在此直接输入或粘贴含 LaTeX 公式（如 $E=mc^2$ 或 $$\int f(x)dx$$）的学术论文段落，将自动进行公式保护并翻译…"></textarea>
           </div>
 
+          <!-- 原文视觉排版浏览区（PDF Canvas 真实渲染 / Word 真实渲染） -->
+          <div class="xl-visual-wrap" id="pm-xl-src-visual-wrap" style="display:none;">
+            <!-- PDF 原文 Canvas 容器 -->
+            <div class="xl-pdf-render-box" id="pm-xl-src-pdf-box" style="display:none;">
+              <canvas id="pm-xl-src-pdf-canvas"></canvas>
+            </div>
+            <!-- Word 原文 docx-preview 容器 -->
+            <div class="xl-docx-render-box" id="pm-xl-src-docx-box" style="display:none;"></div>
+          </div>
+
           <!-- 原文段落列表展示（逐段严格编号，1:1 对齐） -->
           <div class="xl-list" id="pm-xl-src-list"></div>
         </div>
@@ -3769,7 +4112,37 @@ setTheme('dark');
               </svg>
             </div>
             <div class="xl-empty-title">等待翻译启动</div>
-            <div class="xl-empty-desc">在左侧上传 PDF / Word 文档或选择馆藏文献，点击上方「开始翻译」。译文将保留原版排版、表格与公式符号，实现左右 1:1 精准对齐阅读，并支持一键下载双语文档！</div>
+            <div class="xl-empty-desc">在左侧上传 PDF / Word 文档或选择馆藏文献，点击上方「开始翻译」。系统将呈现原版排版原貌，支持翻页与左右并排精读，并支持一键下载 1:1 双语文档！</div>
+          </div>
+
+          <!-- 译文视觉排版浏览区（PDF 学术版面重构 / Word 真实渲染） -->
+          <div class="xl-visual-wrap" id="pm-xl-dst-visual-wrap" style="display:none;">
+            <!-- PDF 译文视觉重构页面 -->
+            <div class="xl-pdf-render-box" id="pm-xl-dst-pdf-box" style="display:none;">
+              <div class="xl-visual-placeholder" id="pm-xl-dst-pdf-placeholder">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+                <div class="pl-title">PDF 双语视觉排版就绪</div>
+                <div class="pl-sub">点击上方「开始翻译」后，右侧将与左侧 PDF 1:1 保持原版排版、双栏与公式对齐同步展示</div>
+              </div>
+              <div class="xl-paper-sheet" id="pm-xl-dst-pdf-sheet" style="display:none;">
+                <div class="sheet-header">
+                  <span id="pm-xl-sheet-title">TRANSLATION PREVIEW</span>
+                  <span id="pm-xl-sheet-page">Page 1</span>
+                </div>
+                <div class="sheet-content" id="pm-xl-sheet-content"></div>
+                <div class="sheet-footer">Papers Manager · PDFMathTranslate Academic Dual Reader</div>
+              </div>
+            </div>
+
+            <!-- Word 译文 docx-preview 容器 -->
+            <div class="xl-docx-render-box" id="pm-xl-dst-docx-box" style="display:none;">
+              <div class="xl-visual-placeholder" id="pm-xl-dst-docx-placeholder">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <div class="pl-title">Word (.docx) 1:1 格式级重构就绪</div>
+                <div class="pl-sub">点击上方「开始翻译」后，将保留全部标题级别、字体字号与表格网格，在此实时渲染生成后的 Word 视觉原貌</div>
+              </div>
+              <div class="xl-docx-rendered-view" id="pm-xl-dst-docx-rendered" style="display:none;"></div>
+            </div>
           </div>
 
           <!-- 译文段落列表展示（行号与左侧原文 100% 对应） -->
@@ -3873,7 +4246,7 @@ setTheme('dark');
   var CHECK_INTERVAL = 6 * 3600 * 1000; /* 每 6 小时自动检查一次 */
   var st = {};
   try { st = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) { st = {}; }
-  var cfg = { version: '5.3.0', build: '2026-10-14', repo: 'KingXiaoTaoOVO/papers-manager' };
+  var cfg = { version: '5.3.1', build: '2026-10-14', repo: 'KingXiaoTaoOVO/papers-manager' };
 
   var I18N = {
     zh: {
@@ -4128,20 +4501,51 @@ setTheme('dark');
 
   function $(id) { return document.getElementById(id); }
 
-  // 客户端独立标识（多人协同）
-  var CLIENT_ID = localStorage.getItem('pm_client_id');
-  if (!CLIENT_ID) {
-    CLIENT_ID = 'user_' + Math.random().toString(36).substring(2, 10);
-    localStorage.setItem('pm_client_id', CLIENT_ID);
+  // 客户端稳定独立标识（支持 localStorage、Cookie 及浏览器硬件指纹兜底，保证同一设备刷新绝不变更）
+  function getStableClientId() {
+    try {
+      var cid = localStorage.getItem('pm_client_id');
+      if (cid && cid.length >= 6) return cid;
+    } catch (e) {}
+
+    var m = document.cookie.match(/(?:^|;\s*)pm_cid=([^;]+)/);
+    if (m && m[1]) {
+      try { localStorage.setItem('pm_client_id', m[1]); } catch (e) {}
+      return m[1];
+    }
+
+    // 基于浏览器环境与硬件特征计算稳定的确定性哈希
+    var raw = [
+      navigator.userAgent,
+      screen.width,
+      screen.height,
+      screen.colorDepth,
+      navigator.language,
+      navigator.hardwareConcurrency || 4
+    ].join('|');
+    var hash = 0;
+    for (var i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+      hash |= 0;
+    }
+    var id = 'usr_' + Math.abs(hash).toString(36);
+    try {
+      localStorage.setItem('pm_client_id', id);
+      document.cookie = 'pm_cid=' + id + '; path=/; max-age=31536000; SameSite=Lax';
+    } catch (e) {}
+    return id;
   }
+
+  var CLIENT_ID = getStableClientId();
 
   var state = {
     mode: 'doc',           // 'doc' | 'paper' | 'paste'
+    viewMode: 'visual',    // 'visual' (视觉排版原貌) | 'dual' (逐段对齐精读)
     outputMode: 'dual',    // 'dual' | 'mono'
     fileType: '',          // 'pdf' | 'docx' | 'text' | 'paper'
     fileName: '',
     fileSize: 0,
-    fileBytes: null,       // Uint8Array / Base64
+    fileBytes: null,       // Uint8Array / Base64 / ArrayBuffer
     activePaperKey: '',
     paras: [],             // [{ id: 1, text: '...', page: 1, isHeading: false, isMath: false }]
     trans: [],             // [{ id: 1, text: '...' }]
@@ -4149,11 +4553,16 @@ setTheme('dark');
     stop: false,
     docxDownloadUrl: '',
     docxBase64: '',
-    notes: []
+    notes: [],
+    // 视觉排版预览控制
+    pdfDoc: null,
+    currentPage: 1,
+    totalPages: 1,
+    zoomScale: 1.0
   };
 
   /* ==============================================================================
-     1. 多人在线协同状态与心跳机制 (Presence)
+     1. 多人在线协同状态与心跳机制 (Presence，真实学者强去重)
      ============================================================================== */
   function sendPresenceHeartbeat() {
     fetch(API_PRESENCE, {
@@ -4167,7 +4576,7 @@ setTheme('dark');
     })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      if (data && data.online_count) {
+      if (data && typeof data.online_count !== 'undefined') {
         var pill = $('pm-online-count');
         if (pill) {
           pill.textContent = data.online_count + ' 位学者在线研读';
@@ -4177,9 +4586,16 @@ setTheme('dark');
     .catch(function () {});
   }
 
-  // 每 25 秒自动发送心跳
-  setInterval(sendPresenceHeartbeat, 25000);
-  setTimeout(sendPresenceHeartbeat, 1500);
+  // 页面卸载或关闭时，发送 leave 告知服务端释放会话
+  window.addEventListener('beforeunload', function () {
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/collab/leave', JSON.stringify({ clientId: CLIENT_ID }));
+    }
+  });
+
+  // 每 15 秒自动发送心跳（服务端 35 秒超时兜底）
+  setInterval(sendPresenceHeartbeat, 15000);
+  setTimeout(sendPresenceHeartbeat, 600);
 
   /* ==============================================================================
      2. 语言与下拉框初始化
@@ -4248,8 +4664,215 @@ setTheme('dark');
   }
 
   /* ==============================================================================
-     4. 文档解析与段落抽取（PDF 与 Word 原生）
+     4. 文档解析与视觉排版渲染引擎（PDF & Word 原版浏览）
      ============================================================================== */
+  var JSZIP_SRC = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+  var DOCX_PREVIEW_SRC = 'https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js';
+
+  function loadDocxPreview() {
+    return new Promise(function (resolve, reject) {
+      if (window.docx && window.JSZip) return resolve(window.docx);
+
+      function loadScript(src) {
+        return new Promise(function (res, rej) {
+          var s = document.createElement('script');
+          s.src = src;
+          s.onload = res;
+          s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+
+      loadScript(JSZIP_SRC)
+        .then(function () { return loadScript(DOCX_PREVIEW_SRC); })
+        .then(function () {
+          if (window.docx) resolve(window.docx);
+          else reject(new Error('docx-preview 加载失败'));
+        })
+        .catch(function (e) {
+          reject(new Error('docx-preview 加载异常: ' + e.message));
+        });
+    });
+  }
+
+  function base64ToArrayBuffer(base64) {
+    var binaryString = window.atob(base64);
+    var len = binaryString.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function updateZoomText() {
+    var el = $('pm-xl-zoom-val');
+    if (el) el.textContent = Math.round(state.zoomScale * 100) + '%';
+  }
+
+  function renderPdfPage(pageNo) {
+    if (!state.pdfDoc) return;
+    if (pageNo < 1) pageNo = 1;
+    if (pageNo > state.totalPages) pageNo = state.totalPages;
+    state.currentPage = pageNo;
+
+    var curInput = $('pm-xl-page-cur');
+    if (curInput) curInput.value = pageNo;
+
+    var prevBtn = $('pm-xl-page-prev');
+    var nextBtn = $('pm-xl-page-next');
+    if (prevBtn) prevBtn.disabled = pageNo <= 1;
+    if (nextBtn) nextBtn.disabled = pageNo >= state.totalPages;
+
+    // 渲染左侧 Canvas 原版 PDF
+    state.pdfDoc.getPage(pageNo).then(function (page) {
+      var canvas = $('pm-xl-src-pdf-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var scale = state.zoomScale * 1.5;
+      var viewport = page.getViewport({ scale: scale });
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      canvas.style.width = Math.round(viewport.width / 1.5) + 'px';
+      canvas.style.height = Math.round(viewport.height / 1.5) + 'px';
+
+      page.render({ canvasContext: ctx, viewport: viewport });
+    });
+
+    // 渲染右侧译文视觉版面
+    renderTranslatedPdfPage(pageNo);
+  }
+
+  function renderTranslatedPdfPage(pageNo) {
+    var placeholder = $('pm-xl-dst-pdf-placeholder');
+    var sheet = $('pm-xl-dst-pdf-sheet');
+    var pageBadge = $('pm-xl-sheet-page');
+    var titleEl = $('pm-xl-sheet-title');
+    var contentEl = $('pm-xl-sheet-content');
+
+    if (pageBadge) pageBadge.textContent = 'Page ' + pageNo + ' / ' + state.totalPages;
+    if (titleEl) titleEl.textContent = state.fileName ? state.fileName.toUpperCase() : 'TRANSLATION PREVIEW';
+
+    var pageParas = state.paras.filter(function (p) { return p.page === pageNo; });
+    if (!pageParas.length) {
+      var perPage = Math.max(1, Math.ceil(state.paras.length / (state.totalPages || 1)));
+      var start = (pageNo - 1) * perPage;
+      pageParas = state.paras.slice(start, start + perPage);
+    }
+
+    var hasAnyTrans = pageParas.some(function (p) {
+      var tr = state.trans.find(function (t) { return t.id === p.id; });
+      return tr && tr.text && tr.text.trim();
+    });
+
+    if (!hasAnyTrans && !state.running) {
+      if (placeholder) placeholder.style.display = 'flex';
+      if (sheet) sheet.style.display = 'none';
+      return;
+    }
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (sheet) sheet.style.display = 'flex';
+
+    if (contentEl) {
+      var html = '';
+      pageParas.forEach(function (p) {
+        var tr = state.trans.find(function (t) { return t.id === p.id; });
+        var transText = (tr && tr.text) || '<span style="opacity:0.35;">(正在翻译此段...)</span>';
+        if (p.isHeading) {
+          html += '<div class="sheet-heading">' + escapeHtml(transText) + '</div>';
+        } else if (state.outputMode === 'dual') {
+          html += '<div class="sheet-dual-block">' +
+                  '  <div class="sheet-dual-src">#' + p.id + ' ' + escapeHtml(p.text) + '</div>' +
+                  '  <div class="sheet-dual-dst">' + escapeHtml(transText) + '</div>' +
+                  '</div>';
+        } else {
+          html += '<div class="sheet-para">' + escapeHtml(transText) + '</div>';
+        }
+      });
+      contentEl.innerHTML = html || '<div style="color:#999;text-align:center;padding:40px;">当前页无文字内容</div>';
+    }
+  }
+
+  function renderWordOriginalView(fileBytes) {
+    var box = $('pm-xl-src-docx-box');
+    if (!box) return;
+    box.innerHTML = '<div style="color:#c9a86a;padding:30px;font-size:12px;">正在解析 Word 原文排版与表格结构…</div>';
+
+    loadDocxPreview().then(function (docxLib) {
+      box.innerHTML = '';
+      docxLib.renderAsync(fileBytes, box, null, {
+        className: 'docx',
+        inWrapper: true,
+        ignoreWidth: false,
+        ignoreHeight: false
+      }).catch(function (err) {
+        box.innerHTML = '<div style="padding:20px;color:#cfcac0;">Word 预览解析提示: ' + escapeHtml(err.message) + '</div>';
+      });
+    }).catch(function () {
+      box.innerHTML = '<div class="sheet-heading">Word 原文文档预览</div>' +
+                      '<div style="color:#cfcac0;padding:20px;">Word 文档已就绪，点击「开始翻译」即可执行 1:1 格式级重构！</div>';
+    });
+  }
+
+  function renderWordTranslatedView(translatedBytes) {
+    var placeholder = $('pm-xl-dst-docx-placeholder');
+    var renderedView = $('pm-xl-dst-docx-rendered');
+    if (placeholder) placeholder.style.display = 'none';
+    if (renderedView) {
+      renderedView.style.display = 'block';
+      renderedView.innerHTML = '<div style="color:#c9a86a;padding:30px;font-size:12px;">正在渲染 1:1 重构后的 Word 译文排版…</div>';
+
+      loadDocxPreview().then(function (docxLib) {
+        renderedView.innerHTML = '';
+        docxLib.renderAsync(translatedBytes, renderedView, null, {
+          className: 'docx',
+          inWrapper: true,
+          ignoreWidth: false,
+          ignoreHeight: false
+        }).catch(function (err) {
+          renderedView.innerHTML = '<div style="padding:20px;color:#cfcac0;">译文渲染提示: ' + escapeHtml(err.message) + '</div>';
+        });
+      }).catch(function () {
+        renderedView.innerHTML = '<div class="sheet-heading">Word 译文已重构完成</div>' +
+                                 '<div style="color:#cfcac0;padding:20px;">可在下方点击下载 1:1 双语或纯译 Word 文档。</div>';
+      });
+    }
+  }
+
+  function setViewMode(vmode) {
+    state.viewMode = vmode;
+    var btnVisual = $('pm-xl-view-visual');
+    var btnDual = $('pm-xl-view-dual');
+    var srcWrap = $('pm-xl-src-visual-wrap');
+    var dstWrap = $('pm-xl-dst-visual-wrap');
+    var srcList = $('pm-xl-src-list');
+    var dstList = $('pm-xl-dst-list');
+    var docToolbar = $('pm-xl-doc-toolbar');
+
+    if (btnVisual) btnVisual.className = 'xl-view-btn' + (vmode === 'visual' ? ' active' : '');
+    if (btnDual) btnDual.className = 'xl-view-btn' + (vmode === 'dual' ? ' active' : '');
+
+    if (vmode === 'visual') {
+      if (srcWrap) srcWrap.style.display = 'flex';
+      if (dstWrap) dstWrap.style.display = 'flex';
+      if (srcList) srcList.style.display = 'none';
+      if (dstList) dstList.style.display = 'none';
+      if (docToolbar) docToolbar.style.display = (state.fileType === 'pdf') ? 'flex' : 'none';
+      if (state.fileType === 'pdf' && state.pdfDoc) {
+        renderPdfPage(state.currentPage);
+      }
+    } else {
+      if (srcWrap) srcWrap.style.display = 'none';
+      if (dstWrap) dstWrap.style.display = 'none';
+      if (srcList) srcList.style.display = 'block';
+      if (dstList) dstList.style.display = 'block';
+      if (docToolbar) docToolbar.style.display = 'none';
+      renderParas();
+    }
+  }
+
   function loadPdfjs() {
     return new Promise(function (resolve, reject) {
       if (window.pdfjsLib) {
@@ -4388,6 +5011,12 @@ setTheme('dark');
       state.docxDownloadUrl = data.downloadUrl;
       state.docxBase64 = data.fileBase64;
 
+      // 实时将生成的 1:1 Word 文档渲染至右侧视觉预览容器
+      if (data.fileBase64) {
+        var transBuf = base64ToArrayBuffer(data.fileBase64);
+        renderWordTranslatedView(transBuf);
+      }
+
       updatePipelineStep(5);
       updateStatus('Word 格式级翻译完成！保留全部字体与表格，已就绪供下载');
       $('pm-xl-status-dot').className = 'xl-status-dot';
@@ -4475,6 +5104,11 @@ setTheme('dark');
     if (el) {
       var txtEl = el.querySelector('.xl-item-text');
       if (txtEl) txtEl.innerHTML = escapeHtml(text);
+    }
+
+    // 实时更新视觉排版右栏当前页译文
+    if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+      renderTranslatedPdfPage(state.currentPage);
     }
   }
 
@@ -4849,8 +5483,18 @@ setTheme('dark');
       $('pm-xl-engine-desc').textContent = 'Word 格式级 1:1 样式重构引擎 · 完整保留粗斜体与表格';
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
-        updateStatus('Word 文档就绪，点击「开始翻译」即可生成 1:1 双语/单语 Word');
+        updateStatus('Word 原文已视觉排版就绪，点击「开始翻译」即可执行 1:1 格式级重构');
         $('pm-xl-run').disabled = false;
+
+        $('pm-xl-src-pdf-box').style.display = 'none';
+        $('pm-xl-src-docx-box').style.display = 'flex';
+        $('pm-xl-dst-pdf-box').style.display = 'none';
+        $('pm-xl-dst-docx-box').style.display = 'flex';
+        var empty = $('pm-xl-dst-empty');
+        if (empty) empty.style.display = 'none';
+
+        setViewMode('visual');
+        renderWordOriginalView(state.fileBytes);
         checkCloudSharedCache(state.activePaperKey);
       };
       reader.readAsArrayBuffer(file);
@@ -4860,11 +5504,29 @@ setTheme('dark');
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
         loadPdfjs().then(function (pdfjs) {
+          return pdfjs.getDocument({ data: state.fileBytes }).promise;
+        }).then(function (pdfDoc) {
+          state.pdfDoc = pdfDoc;
+          state.totalPages = pdfDoc.numPages;
+          state.currentPage = 1;
+          var totalEl = $('pm-xl-page-total');
+          if (totalEl) totalEl.textContent = state.totalPages;
+
+          $('pm-xl-src-pdf-box').style.display = 'flex';
+          $('pm-xl-src-docx-box').style.display = 'none';
+          $('pm-xl-dst-pdf-box').style.display = 'flex';
+          $('pm-xl-dst-docx-box').style.display = 'none';
+          var empty = $('pm-xl-dst-empty');
+          if (empty) empty.style.display = 'none';
+
+          setViewMode('visual');
+          renderPdfPage(1);
+
           var pagesVal = ($('pm-xl-pages').value || '').trim();
-          extractPdfParas(pdfjs, state.fileBytes, pagesVal).then(function (paras) {
+          extractPdfParas(window.pdfjsLib, state.fileBytes, pagesVal).then(function (paras) {
             state.paras = paras;
             renderParas();
-            updateStatus('PDF 解析就绪，共提取 ' + paras.length + ' 个学术段落');
+            updateStatus('PDF 解析就绪，共 ' + state.totalPages + ' 页 / ' + paras.length + ' 个学术段落');
             $('pm-xl-run').disabled = false;
             checkCloudSharedCache(state.activePaperKey);
           });
@@ -4891,7 +5553,26 @@ setTheme('dark');
 
     if (pickBtn) pickBtn.onclick = function () { fileInput.click(); };
     if (dropZone) dropZone.onclick = function () { fileInput.click(); };
-    if (reselectBtn) reselectBtn.onclick = function () { fileInput.click(); };
+
+    if (reselectBtn) {
+      reselectBtn.onclick = function () {
+        $('pm-xl-file-card').style.display = 'none';
+        $('pm-xl-drop').style.display = 'block';
+        $('pm-xl-src-visual-wrap').style.display = 'none';
+        $('pm-xl-dst-visual-wrap').style.display = 'none';
+        $('pm-xl-doc-toolbar').style.display = 'none';
+        $('pm-xl-src-list').innerHTML = '';
+        $('pm-xl-dst-list').innerHTML = '';
+        var empty = $('pm-xl-dst-empty');
+        if (empty) empty.style.display = 'block';
+        $('pm-xl-run').disabled = true;
+        state.fileBytes = null;
+        state.pdfDoc = null;
+        state.paras = [];
+        state.trans = [];
+        fileInput.value = '';
+      };
+    }
 
     if (fileInput) {
       fileInput.onchange = function (e) {
@@ -4910,12 +5591,61 @@ setTheme('dark');
       };
     }
 
+    // 视图模式切换 (文档视觉排版浏览 vs 双语逐段对齐精读)
+    var viewVisualBtn = $('pm-xl-view-visual');
+    var viewDualBtn = $('pm-xl-view-dual');
+    if (viewVisualBtn) viewVisualBtn.onclick = function () { setViewMode('visual'); };
+    if (viewDualBtn) viewDualBtn.onclick = function () { setViewMode('dual'); };
+
+    // PDF 控制工具条
+    var pagePrev = $('pm-xl-page-prev');
+    var pageNext = $('pm-xl-page-next');
+    var pageCur = $('pm-xl-page-cur');
+    var zoomIn = $('pm-xl-zoom-in');
+    var zoomOut = $('pm-xl-zoom-out');
+    var zoomFit = $('pm-xl-zoom-fit');
+
+    if (pagePrev) pagePrev.onclick = function () {
+      if (state.currentPage > 1) renderPdfPage(state.currentPage - 1);
+    };
+    if (pageNext) pageNext.onclick = function () {
+      if (state.currentPage < state.totalPages) renderPdfPage(state.currentPage + 1);
+    };
+    if (pageCur) {
+      pageCur.onchange = function () {
+        var p = parseInt(pageCur.value, 10);
+        if (!isNaN(p)) renderPdfPage(p);
+      };
+    }
+    if (zoomIn) {
+      zoomIn.onclick = function () {
+        state.zoomScale = Math.min(2.5, state.zoomScale + 0.15);
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+    if (zoomOut) {
+      zoomOut.onclick = function () {
+        state.zoomScale = Math.max(0.6, state.zoomScale - 0.15);
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+    if (zoomFit) {
+      zoomFit.onclick = function () {
+        state.zoomScale = 1.0;
+        updateZoomText();
+        renderPdfPage(state.currentPage);
+      };
+    }
+
     // 模式选择 Tabs
     $('pm-xl-tab-doc').onclick = function () {
       setModeTab('doc');
-      $('pm-xl-drop').style.display = state.paras.length ? 'none' : 'block';
+      $('pm-xl-drop').style.display = state.paras.length || state.fileBytes ? 'none' : 'block';
       $('pm-xl-paper-picker').style.display = 'none';
       $('pm-xl-paste-wrap').style.display = 'none';
+      if (state.viewMode === 'visual') setViewMode('visual');
     };
     $('pm-xl-tab-paper').onclick = function () {
       setModeTab('paper');
@@ -4929,6 +5659,7 @@ setTheme('dark');
       $('pm-xl-drop').style.display = 'none';
       $('pm-xl-paper-picker').style.display = 'none';
       $('pm-xl-paste-wrap').style.display = 'block';
+      setViewMode('dual');
     };
 
     $('pm-xl-paper-load-btn').onclick = function () {
@@ -4944,11 +5675,17 @@ setTheme('dark');
       dualPill.className = 'xl-pill active';
       monoPill.className = 'xl-pill';
       state.outputMode = 'dual';
+      if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        renderTranslatedPdfPage(state.currentPage);
+      }
     };
     monoPill.onclick = function () {
       monoPill.className = 'xl-pill active';
       dualPill.className = 'xl-pill';
       state.outputMode = 'mono';
+      if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        renderTranslatedPdfPage(state.currentPage);
+      }
     };
 
     // 自由文本输入解析
@@ -4974,6 +5711,20 @@ setTheme('dark');
       $('pm-xl-run').disabled = false;
       $('pm-xl-stop').disabled = true;
     };
+
+    // 下载 Word 双语与纯译按钮
+    var dlDocxDual = $('pm-xl-dl-docx-dual');
+    var dlDocxMono = $('pm-xl-dl-docx-mono');
+    if (dlDocxDual) {
+      dlDocxDual.onclick = function () {
+        if (state.docxDownloadUrl) window.location.href = state.docxDownloadUrl;
+      };
+    }
+    if (dlDocxMono) {
+      dlDocxMono.onclick = function () {
+        if (state.docxDownloadUrl) window.location.href = state.docxDownloadUrl;
+      };
+    }
 
     // 导出 Markdown
     $('pm-xl-export-md').onclick = function () {
@@ -5002,6 +5753,20 @@ setTheme('dark');
       w.document.write(html);
       w.document.close();
     };
+
+    // 快捷键支持：翻页与 Esc 关闭
+    document.addEventListener('keydown', function (e) {
+      if (!$('pm-xl').classList.contains('open')) return;
+      if (e.key === 'Escape') {
+        closeStudio();
+      } else if (state.viewMode === 'visual' && state.fileType === 'pdf') {
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          if (state.currentPage > 1) renderPdfPage(state.currentPage - 1);
+        } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          if (state.currentPage < state.totalPages) renderPdfPage(state.currentPage + 1);
+        }
+      }
+    });
 
     // 复制全译文
     $('pm-xl-copy-all').onclick = function () {

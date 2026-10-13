@@ -5,7 +5,7 @@
   var CHECK_INTERVAL = 6 * 3600 * 1000; /* 每 6 小时自动检查一次 */
   var st = {};
   try { st = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) { st = {}; }
-  var cfg = { version: '5.3.0', build: '2026-10-14', repo: 'KingXiaoTaoOVO/papers-manager' };
+  var cfg = { version: '5.3.1', build: '2026-10-14', repo: 'KingXiaoTaoOVO/papers-manager' };
 
   var I18N = {
     zh: {

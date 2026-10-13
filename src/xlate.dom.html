@@ -110,14 +110,26 @@
           从馆藏文献载入
         </button>
         <button class="xl-tab" id="pm-xl-tab-paste" type="button">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           公式与自由文本翻译
+        </button>
+      </div>
+
+      <!-- 视图模式切换器：文档视觉排版浏览 vs 双语逐段对齐精读 -->
+      <div class="xl-view-modes">
+        <button class="xl-view-btn active" id="pm-xl-view-visual" type="button" title="视觉排版原貌浏览（左右并排查看原文与译文文档真实排版）">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          文档视觉排版浏览
+        </button>
+        <button class="xl-view-btn" id="pm-xl-view-dual" type="button" title="双语逐段对齐精读（逐段 1:1 对照阅读与公式查看）">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          双语逐段对齐精读
         </button>
       </div>
 
       <div class="xl-quick-tools">
         <!-- 联动滚动开关 -->
-        <label class="xl-toggle-label" title="开启后左右两栏滚动与翻页联动">
+        <label class="xl-toggle-label" title="开启后左右两栏滚动联动">
           <input type="checkbox" id="pm-xl-sync-scroll" checked>
           <span>左右联动滚动</span>
         </label>
@@ -131,6 +143,43 @@
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           研读讨论与批注 (<span id="pm-xl-notes-badge">0</span>)
         </button>
+      </div>
+    </div>
+
+    <!-- 文档视觉浏览控制条（翻页、缩放、适应宽度） -->
+    <div class="xl-doc-toolbar" id="pm-xl-doc-toolbar" style="display:none;">
+      <div class="doc-tool-group">
+        <button class="doc-tool-btn" id="pm-xl-page-prev" type="button" title="上一页 (Page Up / ←)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          上一页
+        </button>
+        <div class="doc-page-indicator">
+          <span>第</span>
+          <input type="number" id="pm-xl-page-cur" value="1" min="1" max="1" />
+          <span>/ <span id="pm-xl-page-total">1</span> 页</span>
+        </div>
+        <button class="doc-tool-btn" id="pm-xl-page-next" type="button" title="下一页 (Page Down / →)">
+          下一页
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="doc-tool-group">
+        <button class="doc-tool-btn icon-only" id="pm-xl-zoom-out" type="button" title="缩小 (-)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <span class="doc-zoom-txt" id="pm-xl-zoom-val">100%</span>
+        <button class="doc-tool-btn icon-only" id="pm-xl-zoom-in" type="button" title="放大 (+)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <button class="doc-tool-btn" id="pm-xl-zoom-fit" type="button" title="自适应窗口宽度">自适应宽度</button>
+      </div>
+
+      <div class="doc-tool-group">
+        <label class="xl-toggle-label" title="开启后左右两栏同步翻页">
+          <input type="checkbox" id="pm-xl-sync-page" checked>
+          <span>左右同步翻页</span>
+        </label>
       </div>
     </div>
 
@@ -208,6 +257,16 @@
             <textarea id="pm-xl-paste" placeholder="在此直接输入或粘贴含 LaTeX 公式（如 $E=mc^2$ 或 $$\int f(x)dx$$）的学术论文段落，将自动进行公式保护并翻译…"></textarea>
           </div>
 
+          <!-- 原文视觉排版浏览区（PDF Canvas 真实渲染 / Word 真实渲染） -->
+          <div class="xl-visual-wrap" id="pm-xl-src-visual-wrap" style="display:none;">
+            <!-- PDF 原文 Canvas 容器 -->
+            <div class="xl-pdf-render-box" id="pm-xl-src-pdf-box" style="display:none;">
+              <canvas id="pm-xl-src-pdf-canvas"></canvas>
+            </div>
+            <!-- Word 原文 docx-preview 容器 -->
+            <div class="xl-docx-render-box" id="pm-xl-src-docx-box" style="display:none;"></div>
+          </div>
+
           <!-- 原文段落列表展示（逐段严格编号，1:1 对齐） -->
           <div class="xl-list" id="pm-xl-src-list"></div>
         </div>
@@ -236,7 +295,37 @@
               </svg>
             </div>
             <div class="xl-empty-title">等待翻译启动</div>
-            <div class="xl-empty-desc">在左侧上传 PDF / Word 文档或选择馆藏文献，点击上方「开始翻译」。译文将保留原版排版、表格与公式符号，实现左右 1:1 精准对齐阅读，并支持一键下载双语文档！</div>
+            <div class="xl-empty-desc">在左侧上传 PDF / Word 文档或选择馆藏文献，点击上方「开始翻译」。系统将呈现原版排版原貌，支持翻页与左右并排精读，并支持一键下载 1:1 双语文档！</div>
+          </div>
+
+          <!-- 译文视觉排版浏览区（PDF 学术版面重构 / Word 真实渲染） -->
+          <div class="xl-visual-wrap" id="pm-xl-dst-visual-wrap" style="display:none;">
+            <!-- PDF 译文视觉重构页面 -->
+            <div class="xl-pdf-render-box" id="pm-xl-dst-pdf-box" style="display:none;">
+              <div class="xl-visual-placeholder" id="pm-xl-dst-pdf-placeholder">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+                <div class="pl-title">PDF 双语视觉排版就绪</div>
+                <div class="pl-sub">点击上方「开始翻译」后，右侧将与左侧 PDF 1:1 保持原版排版、双栏与公式对齐同步展示</div>
+              </div>
+              <div class="xl-paper-sheet" id="pm-xl-dst-pdf-sheet" style="display:none;">
+                <div class="sheet-header">
+                  <span id="pm-xl-sheet-title">TRANSLATION PREVIEW</span>
+                  <span id="pm-xl-sheet-page">Page 1</span>
+                </div>
+                <div class="sheet-content" id="pm-xl-sheet-content"></div>
+                <div class="sheet-footer">Papers Manager · PDFMathTranslate Academic Dual Reader</div>
+              </div>
+            </div>
+
+            <!-- Word 译文 docx-preview 容器 -->
+            <div class="xl-docx-render-box" id="pm-xl-dst-docx-box" style="display:none;">
+              <div class="xl-visual-placeholder" id="pm-xl-dst-docx-placeholder">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <div class="pl-title">Word (.docx) 1:1 格式级重构就绪</div>
+                <div class="pl-sub">点击上方「开始翻译」后，将保留全部标题级别、字体字号与表格网格，在此实时渲染生成后的 Word 视觉原貌</div>
+              </div>
+              <div class="xl-docx-rendered-view" id="pm-xl-dst-docx-rendered" style="display:none;"></div>
+            </div>
           </div>
 
           <!-- 译文段落列表展示（行号与左侧原文 100% 对应） -->

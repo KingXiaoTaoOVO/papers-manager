@@ -957,3 +957,287 @@
   border-color: #c9a86a !important;
   box-shadow: 0 2px 10px rgba(201, 168, 106, 0.25);
 }
+
+/* ===== 文档视觉排版浏览模式与控制条 (v5.3.1) ===== */
+.xl-view-modes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.xl-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-family: inherit;
+  color: #9a978f;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.xl-view-btn:hover {
+  color: #eae8e4;
+  background: rgba(255, 255, 255, 0.05);
+}
+.xl-view-btn.active {
+  color: #c9a86a;
+  background: rgba(201, 168, 106, 0.14);
+  border-color: rgba(201, 168, 106, 0.35);
+  font-weight: 500;
+}
+
+/* 文档控制工具条 */
+.xl-doc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: #141311;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11.5px;
+  color: #9a978f;
+  user-select: none;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.doc-tool-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  height: 26px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #cfcac0;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.doc-tool-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #eae8e4;
+  border-color: rgba(201, 168, 106, 0.3);
+}
+.doc-tool-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.doc-tool-btn.icon-only {
+  padding: 0 6px;
+}
+.doc-page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #b5afa3;
+}
+.doc-page-indicator input {
+  width: 42px;
+  height: 24px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: #eae8e4;
+  font-size: 12px;
+  outline: none;
+}
+.doc-page-indicator input:focus {
+  border-color: #c9a86a;
+}
+.doc-zoom-txt {
+  font-size: 11.5px;
+  color: #c9a86a;
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 视觉排版容器与纸质呈现 */
+.xl-visual-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+}
+.xl-pdf-render-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.xl-pdf-render-box canvas {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  background: #ffffff;
+  transition: transform 0.15s ease;
+}
+
+/* Word (.docx) docx-preview 容器样式 */
+.xl-docx-render-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.xl-docx-render-box .docx-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.xl-docx-render-box .docx {
+  background: #ffffff !important;
+  color: #222222 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  margin-bottom: 24px !important;
+  border-radius: 4px !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* 占位与等待引导卡片 */
+.xl-visual-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  margin: 30px auto;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(201, 168, 106, 0.28);
+  border-radius: 12px;
+  color: #9a978f;
+}
+.xl-visual-placeholder svg {
+  color: #c9a86a;
+  margin-bottom: 12px;
+}
+.xl-visual-placeholder .pl-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #eae8e4;
+  margin-bottom: 6px;
+}
+.xl-visual-placeholder .pl-sub {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #9a978f;
+}
+
+/* 译文学术 A4 纸张排版呈现 */
+.xl-paper-sheet {
+  width: 100%;
+  max-width: 780px;
+  min-height: 860px;
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 40px 48px;
+  box-sizing: border-box;
+  font-family: 'Times New Roman', 'Source Serif 4', 'Songti SC', 'SimSun', serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.xl-paper-sheet .sheet-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  font-size: 10.5px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+}
+.xl-paper-sheet .sheet-content {
+  flex: 1;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.xl-paper-sheet .sheet-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  color: #111;
+}
+.xl-paper-sheet .sheet-abstract {
+  background: #f7f6f3;
+  border-left: 3px solid #c9a86a;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.xl-paper-sheet .sheet-heading {
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  color: #222;
+}
+.xl-paper-sheet .sheet-para {
+  margin-bottom: 12px;
+  text-align: justify;
+  text-indent: 2em;
+}
+.xl-paper-sheet .sheet-dual-block {
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  background: #faf9f6;
+  border-radius: 4px;
+  border-left: 2px solid #5aa87e;
+}
+.xl-paper-sheet .sheet-dual-src {
+  font-size: 11.5px;
+  color: #777;
+  margin-bottom: 4px;
+  font-family: sans-serif;
+}
+.xl-paper-sheet .sheet-dual-dst {
+  font-size: 13px;
+  color: #111;
+  font-weight: 500;
+}
+.xl-paper-sheet .sheet-footer {
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+  margin-top: 24px;
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+}

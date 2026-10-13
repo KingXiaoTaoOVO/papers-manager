@@ -60,10 +60,34 @@ _bing_session = {"opener": None, "url": None, "ig": None, "iid": None,
                  "key": None, "token": None, "ts": 0}
 _text_cache = {}
 
-# 多人协作内存存储（附带本地 JSON 文件持久化）
-_presence = {}          # {client_id: {"name": str, "last_seen": float, "reading": str}}
+# 多人协作内存存储（真实学者设备/IP 强去重，避免刷新累加）
+PRESENCE_TTL = 35         # 35秒活跃超时（前端每15秒发送心跳）
+_presence = {}            # {visitor_key: {"ip": str, "clientId": str, "name": str, "last_seen": float, "reading": str}}
 _shared_translations = {} # {paper_key: {"title": str, "mode": str, "dual_file": str, "mono_file": str, "time": str, "paras": list}}
-_collab_notes = {}      # {paper_id: [{"id": str, "user": str, "content": str, "time": str}]}
+_collab_notes = {}        # {paper_id: [{"id": str, "user": str, "content": str, "time": str}]}
+
+def _get_client_ip(headers, client_address):
+    """从 1Panel/Nginx/Cloudflare 请求头穿透提取真实客户端 IP"""
+    for h in ("cf-connecting-ip", "x-real-ip", "x-forwarded-for"):
+        val = headers.get(h)
+        if val:
+            ip = val.split(",")[0].strip()
+            if ip:
+                return ip
+    return client_address[0] if client_address else "127.0.0.1"
+
+def _get_active_presence():
+    """获取当前真实在线学者状态（严格去重）"""
+    now = time.time()
+    with _lock:
+        expired = [k for k, v in _presence.items() if now - v.get("last_seen", 0) > PRESENCE_TTL]
+        for k in expired:
+            del _presence[k]
+        active = list(_presence.values())
+        # 统计真实在线学者数（按 IP + 设备独立去重，同台设备同IP刷新绝不累加）
+        unique_visitors = set(f"{v['ip']}::{v.get('clientId', '')}" for v in active)
+        online_count = max(1, len(unique_visitors))
+    return online_count, active
 
 # 尝试载入持久化数据
 PERSIST_FILE = os.path.join(DATA_DIR, "collab_state.json")
@@ -436,11 +460,9 @@ class Handler(BaseHTTPRequestHandler):
 
         # 2. 在线协同学者状态
         if path == "/api/collab/presence":
-            now = time.time()
-            with _lock:
-                active = [v for k, v in _presence.items() if now - v["last_seen"] < 60]
+            online_count, active = _get_active_presence()
             return self._send(200, {
-                "online_count": max(1, len(active)),
+                "online_count": online_count,
                 "users": active
             })
 
@@ -478,20 +500,35 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             return self._send(400, {"error": "invalid json"})
 
-        # 1. 在线协同心跳
+        # 1. 在线协同心跳（真实 IP + 稳定设备标识严格去重）
         if path == "/api/collab/presence":
-            client_id = payload.get("clientId") or str(uuid.uuid4())
+            client_ip = _get_client_ip(self.headers, self.client_address)
+            client_id = (payload.get("clientId") or "").strip()
+            if not client_id:
+                client_id = "v_" + client_ip.replace(".", "_").replace(":", "_")
             name = payload.get("name") or "匿名学者"
             reading = payload.get("reading") or ""
+            visitor_key = f"{client_ip}::{client_id}"
             with _lock:
-                _presence[client_id] = {
+                _presence[visitor_key] = {
+                    "ip": client_ip,
                     "clientId": client_id,
                     "name": name,
                     "reading": reading,
                     "last_seen": time.time()
                 }
-                active = [v for k, v in _presence.items() if time.time() - v["last_seen"] < 60]
-            return self._send(200, {"ok": True, "online_count": max(1, len(active))})
+            online_count, _ = _get_active_presence()
+            return self._send(200, {"ok": True, "online_count": online_count})
+
+        # 1.5 学者离线通知（页面卸载 / 关闭时发送，立即释放会话）
+        if path == "/api/collab/leave":
+            client_ip = _get_client_ip(self.headers, self.client_address)
+            client_id = (payload.get("clientId") or "").strip()
+            visitor_key = f"{client_ip}::{client_id}"
+            with _lock:
+                _presence.pop(visitor_key, None)
+            online_count, _ = _get_active_presence()
+            return self._send(200, {"ok": True, "online_count": online_count})
 
         # 2. 文本批量翻译（兼容旧版与新版，支持 Bing / DeepSeek）
         if path == "/api/translate":
