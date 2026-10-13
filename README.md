@@ -1,9 +1,9 @@
 # 论文期刊管理器 · Papers Manager（含 PDF 双语翻译）
 
-纯前端单文件论文库 + 内嵌 **pdf2zh** PDF 双语翻译，一套 `docker compose` 起两个服务，开箱即用。
+纯前端单文件论文库 + **容器内置** PDF 双语翻译（Bing 引擎，无需 Key、无外部服务），单容器 `docker compose` 开箱即用。
 
-- 线上：<https://papers.pcb.im> ｜ 翻译服务：<https://papers.pcb.im/translate/>
-- 技术形态：单文件 HTML（零构建依赖）+ nginx 静态托管 + Gradio 翻译服务，Docker / 1Panel 一键部署
+- 线上：<https://papers.pcb.im>（左下角「PDF 双语翻译」为内置面板）
+- 技术形态：单文件 HTML + nginx + 容器内自带的 Python 翻译接口，**单容器** Docker / 1Panel 一键部署
 - 在线更新：页面右下角版本胶囊自动对接 GitHub Release，发现新版本即横幅提醒
 - 内置数据：**104 篇论文**（含中英标题、摘要、全文翻译、DOI/PMID/PMC）
 
@@ -20,12 +20,14 @@ web/
 │   └── default.conf          # nginx 站点配置（gzip / 缓存 / 健康检查 / /translate/ 反代）
 ├── src/                      # 注入层源码（由 build.py 打进 index.html）
 │   ├── updater.{css,dom.html,js}     # 在线更新 + 部署信息面板
-│   └── translate.{css,dom.html,js}   # PDF 双语翻译入口（浮动按钮 + 全屏内嵌）
+│   └── xlate.{css,dom.html,js}       # 内置 PDF 双语翻译面板（原生集成）
 ├── translator/               # 翻译工具本体（本地 Windows 用法 + 说明）
 │   ├── launch_webui.py       # 增强版启动器（依赖自检 / 端口自愈 / 端口可配）
 │   ├── 一键启动PDF双语翻译工具.bat
 │   └── README.md
-├── docker-compose.yml        # 两个服务：papers-manager(nginx) + pdf2zh
+├── api/translate_api.py      # 容器内置翻译接口（Python 标准库，Bing 后端）
+├── entrypoint.sh             # 容器入口（翻译接口 + nginx）
+├── docker-compose.yml        # 单容器：papers-manager（站点 + 翻译能力）
 ├── Dockerfile                # 可选：把站点打成镜像（ghcr.io/kingxiaotaovo/papers-manager）
 ├── build.py                  # 由 .scratch/preview/v5-dark.html + src/ 重新生成 html/index.html
 ├── apps/papers-manager/      # 1Panel 第三方应用商店条目
@@ -35,7 +37,7 @@ web/
 ## 二、部署（1Panel / Docker）
 
 ```bash
-docker compose up -d      # 站点 :18080，翻译服务内置（同网络，不对外暴露端口）
+docker compose up -d --build   # 构建并启动单容器，站点 :18080，翻译能力内置
 ```
 
 1Panel 里：**容器 → 编排 → 创建编排**，粘贴 `docker-compose.yml` 内容即可；随后在
@@ -44,32 +46,18 @@ docker compose up -d      # 站点 :18080，翻译服务内置（同网络，不
 > **Cloudflare 用户注意**：若域名走 CF 代理且源站 HTTPS 端口非 443（例如 OpenResty 监听 5055），
 > 需要在 CF 的 **Rules → Origin Rules** 里为新域名加一条「Change origin port」，否则会 521。
 
-### 翻译服务是怎么挂上去的
+### 翻译能力是怎么集成进去的
 
-官方镜像原生支持 Gradio 的根路径环境变量，**无需改镜像**：
+**没有任何独立服务/容器**，翻译能力就在论文项目自己的容器里：
 
-```yaml
-  pdf2zh:
-    image: byaidu/pdf2zh:1.9.11
-    environment:
-      - GRADIO_ROOT_PATH=/translate    # 关键
-      - GRADIO_SERVER_NAME=0.0.0.0
-```
+1. **前端**（`src/xlate.js`）：拖入 PDF → 用 pdf.js 在浏览器本地抽取段落 → 分段调用站点自己的接口；纯文本可直接粘贴。
+2. **后端**（`api/translate_api.py`）：容器内一个零依赖的 Python 接口（仅标准库），
+   走 Bing 翻译（与 pdf2zh 的 Bing 后端同一套接口），因此**国内直连、免 Key**；
+   nginx 把 `POST /api/translate` 转发到容器内的 `127.0.0.1:8765`，浏览器同源调用，无跨域问题。
+3. 结果以左右双语对照呈现，支持进度、停止与 Markdown 导出。
 
-站点 nginx 再把它反代到子路径（含 WebSocket 升级，Gradio 队列依赖）：
-
-```nginx
-location /translate/ {
-    proxy_pass http://pdf2zh:7860/;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_read_timeout 3600s;
-}
-```
-
-页面左下角「**PDF 双语翻译**」按钮点击后全屏内嵌该服务，也可新标签页打开。
-`html/version.json` 里的 `translateUrl` 控制入口地址，留空则隐藏入口。
+> 需要「保持排版的 PDF 成品文件（mono/dual PDF）」时，仍可用仓库里的 `translator/` 本地工具
+> （基于 pdf2zh，本机运行，文件不出本机）。
 
 ## 三、本地 Windows 使用翻译工具
 

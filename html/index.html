@@ -602,36 +602,54 @@ details summary:hover{color:var(--acc)}
 #pm-modal .pm-acts{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 @media (prefers-reduced-motion:reduce){#pm-banner,#pm-chip,#pm-pop,#pm-modal .pm-box{transition:none;animation:none}}
 
-/* ===== module: translate ===== */
-/* ===== PDF 双语翻译入口（注入层，复用应用主题令牌） ===== */
-#pm-tr-chip{position:fixed;left:16px;bottom:16px;z-index:9991;display:flex;align-items:center;gap:8px;
+/* ===== module: xlate ===== */
+/* ===== 内置 PDF 双语翻译面板（原生集成，复用应用主题令牌） ===== */
+#pm-xl-chip{position:fixed;left:16px;bottom:16px;z-index:9991;display:flex;align-items:center;gap:8px;
   padding:7px 13px;border-radius:999px;background:var(--popover,rgba(20,19,18,.95));
   border:1px solid var(--stroke,rgba(255,255,255,.08));box-shadow:var(--shadow,0 14px 40px rgba(0,0,0,.34));
   color:var(--fg);cursor:pointer;user-select:none;
   font:12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .15s,transform .15s}
-#pm-tr-chip:hover{border-color:var(--acc,#c9a86a);transform:translateY(-1px)}
-#pm-tr-chip .pm-tr-ico{width:14px;height:14px;flex:none;stroke:var(--acc,#c9a86a);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-#pm-tr-chip .pm-tr-txt{font-weight:600}
-#pm-tr-chip .pm-tr-sub{color:var(--dim);font-size:11px}
+#pm-xl-chip:hover{border-color:var(--acc,#c9a86a);transform:translateY(-1px)}
+#pm-xl-chip .ico{width:14px;height:14px;flex:none;stroke:var(--acc,#c9a86a);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#pm-xl-chip .sub{color:var(--dim);font-size:11px}
 
-#pm-tr-modal{position:fixed;inset:0;z-index:9995;display:none;flex-direction:column;
-  background:var(--scrim,rgba(7,6,6,.72));backdrop-filter:blur(6px)}
-#pm-tr-modal.show{display:flex}
-#pm-tr-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;flex:none;
-  background:var(--popover,rgba(20,19,18,.97));border-bottom:1px solid var(--stroke,rgba(255,255,255,.08));
-  color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
-#pm-tr-bar b{color:var(--acc,#c9a86a)}
-#pm-tr-bar .pm-tr-note{color:var(--dim);font-size:12px;margin-left:auto}
-#pm-tr-frame{flex:1 1 auto;width:100%;border:0;background:#0d0c0b}
-#pm-tr-loading{position:absolute;inset:56px 0 0;display:flex;align-items:center;justify-content:center;
-  color:var(--dim);font:13px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;pointer-events:none}
-#pm-tr-modal.ready #pm-tr-loading{display:none}
-.pm-tr-btn{appearance:none;border:1px solid var(--stroke2,rgba(255,255,255,.16));background:var(--glass,rgba(255,255,255,.05));
+#pm-xl{position:fixed;inset:0;z-index:9995;display:none;flex-direction:column;
+  background:var(--scrim,rgba(7,6,6,.78));backdrop-filter:blur(6px);
+  font:13px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+#pm-xl.show{display:flex}
+#pm-xl .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;flex:none;
+  background:var(--popover,rgba(20,19,18,.97));border-bottom:1px solid var(--stroke,rgba(255,255,255,.08));color:var(--fg)}
+#pm-xl .bar b{color:var(--acc,#c9a86a)}
+#pm-xl .bar .sp{flex:1 1 auto}
+#pm-xl select{background:var(--field,rgba(255,255,255,.05));color:var(--fg);border:1px solid var(--stroke2,rgba(255,255,255,.16));
+  border-radius:8px;padding:5px 8px;font-size:12px}
+#pm-xl .btn{appearance:none;border:1px solid var(--stroke2,rgba(255,255,255,.16));background:var(--glass,rgba(255,255,255,.05));
   color:var(--fg);border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer;white-space:nowrap}
-.pm-tr-btn:hover{background:var(--accSoft,rgba(201,168,106,.14));border-color:var(--acc,#c9a86a)}
-.pm-tr-btn.primary{background:var(--acc,#c9a86a);border-color:var(--acc,#c9a86a);color:var(--onAcc,#141311);font-weight:600}
-@media (prefers-reduced-motion:reduce){#pm-tr-chip{transition:none}}
+#pm-xl .btn:hover{background:var(--accSoft,rgba(201,168,106,.14));border-color:var(--acc,#c9a86a)}
+#pm-xl .btn.primary{background:var(--acc,#c9a86a);border-color:var(--acc,#c9a86a);color:var(--onAcc,#141311);font-weight:600}
+#pm-xl .btn:disabled{opacity:.45;cursor:not-allowed}
+#pm-xl .body{flex:1 1 auto;display:flex;gap:1px;min-height:0;background:var(--stroke,rgba(255,255,255,.08))}
+#pm-xl .pane{flex:1 1 50%;min-width:0;overflow:auto;background:var(--bg,#0d0c0b);padding:18px 22px}
+#pm-xl .pane h4{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
+#pm-xl .pair{margin:0 0 16px;padding:0 0 14px;border-bottom:1px dashed var(--stroke,rgba(255,255,255,.07))}
+#pm-xl .pair .src{margin:0 0 8px;color:var(--fg);white-space:pre-wrap;word-break:break-word}
+#pm-xl .pair .dst{margin:0;color:var(--fg);white-space:pre-wrap;word-break:break-word}
+#pm-xl .pair .dst.wait{color:var(--dim2,#6f6c66)}
+#pm-xl .pair .tag{display:inline-block;font-size:10px;color:var(--dim2,#6f6c66);margin-right:6px;
+  font-variant-numeric:tabular-nums}
+#pm-xl .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--dim);text-align:center}
+#pm-xl .drop{border:1.5px dashed var(--stroke2,rgba(255,255,255,.16));border-radius:14px;padding:26px 34px;cursor:pointer;
+  transition:border-color .15s,background .15s}
+#pm-xl .drop:hover,#pm-xl .drop.over{border-color:var(--acc,#c9a86a);background:var(--accSoft,rgba(201,168,106,.08))}
+#pm-xl textarea{width:100%;min-height:180px;background:var(--field,rgba(255,255,255,.05));color:var(--fg);
+  border:1px solid var(--stroke2,rgba(255,255,255,.14));border-radius:10px;padding:12px 14px;font-size:13px;
+  line-height:1.7;resize:vertical;font-family:inherit}
+#pm-xl .foot{flex:none;display:flex;align-items:center;gap:12px;padding:8px 16px;
+  background:var(--popover,rgba(20,19,18,.97));border-top:1px solid var(--stroke,rgba(255,255,255,.08));color:var(--dim);font-size:12px}
+#pm-xl .prog{flex:1 1 auto;height:5px;border-radius:99px;background:var(--glass2,rgba(255,255,255,.06));overflow:hidden}
+#pm-xl .prog i{display:block;height:100%;width:0;background:var(--acc,#c9a86a);transition:width .25s}
+@media (max-width:860px){#pm-xl .body{flex-direction:column}#pm-xl .pane{flex:1 1 auto}}
 
 </style>
 </head>
@@ -2598,22 +2616,48 @@ setTheme('dark');
   </div>
 </div>
 
-<!-- module: translate -->
-<div id="pm-tr-chip" title="PDF 1:1 格式级双语翻译（pdf2zh）">
-  <svg class="pm-tr-ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 18h4"/></svg>
-  <span class="pm-tr-txt" id="pm-tr-chip-txt">PDF 双语翻译</span>
-  <span class="pm-tr-sub" id="pm-tr-chip-sub"></span>
+<!-- module: xlate -->
+<div id="pm-xl-chip" title="内置 PDF 双语翻译（Bing 引擎，无需 Key）">
+  <svg class="ico" viewBox="0 0 24 24"><path d="M4 5h7M7.5 5v1c0 4-1.5 8-4 11"/><path d="M5 12c2.5 3 5 4.5 8 5.5"/><path d="M13 20l3.5-8 3.5 8M14.2 17h4.6"/></svg>
+  <span class="txt" id="pm-xl-chip-txt">PDF 双语翻译</span>
+  <span class="sub" id="pm-xl-chip-sub">内置引擎</span>
 </div>
-<div id="pm-tr-modal" role="dialog" aria-modal="true" aria-label="PDF 双语翻译">
-  <div id="pm-tr-bar">
-    <span id="pm-tr-title"></span>
-    <span class="pm-tr-note" id="pm-tr-note"></span>
-    <button class="pm-tr-btn" id="pm-tr-reload" type="button"></button>
-    <button class="pm-tr-btn" id="pm-tr-open" type="button"></button>
-    <button class="pm-tr-btn primary" id="pm-tr-close" type="button"></button>
+
+<div id="pm-xl" role="dialog" aria-modal="true" aria-label="PDF 双语翻译">
+  <div class="bar">
+    <span><b id="pm-xl-title">PDF 双语翻译</b> <span class="sub" id="pm-xl-engine"></span></span>
+    <span class="sp"></span>
+    <button class="btn" id="pm-xl-pick" type="button">选择 PDF</button>
+    <select id="pm-xl-from" title="源语言"></select>
+    <span style="color:var(--dim)">→</span>
+    <select id="pm-xl-to" title="目标语言"></select>
+    <button class="btn primary" id="pm-xl-run" type="button" disabled>开始翻译</button>
+    <button class="btn" id="pm-xl-stop" type="button" disabled>停止</button>
+    <button class="btn" id="pm-xl-export" type="button" disabled>导出 Markdown</button>
+    <button class="btn" id="pm-xl-close" type="button">关闭</button>
   </div>
-  <div id="pm-tr-loading">正在加载翻译服务…</div>
-  <iframe id="pm-tr-frame" title="PDF 双语翻译" allow="clipboard-read; clipboard-write"></iframe>
+  <div class="body">
+    <div class="pane" id="pm-xl-src">
+      <div class="empty" id="pm-xl-empty">
+        <div class="drop" id="pm-xl-drop">
+          <div style="font-size:15px;color:var(--fg);margin-bottom:6px">拖入 PDF，或点击选择文件</div>
+          <div>也可以直接粘贴文本（支持中/英/日等 → 中文）</div>
+        </div>
+        <textarea id="pm-xl-paste" placeholder="在此粘贴要翻译的文本，每段之间空一行…"></textarea>
+      </div>
+      <div id="pm-xl-src-list"></div>
+    </div>
+    <div class="pane" id="pm-xl-dst">
+      <h4 id="pm-xl-dst-h">译文</h4>
+      <div id="pm-xl-dst-list"></div>
+    </div>
+  </div>
+  <div class="foot">
+    <span id="pm-xl-status">就绪</span>
+    <span class="prog"><i id="pm-xl-prog"></i></span>
+    <span id="pm-xl-count"></span>
+  </div>
+  <input type="file" id="pm-xl-file" accept="application/pdf" style="display:none">
 </div>
 
 <script>
@@ -2846,72 +2890,290 @@ setTheme('dark');
   else boot();
 })();
 
-/* ===== module: translate ===== */
-/* ===== PDF 双语翻译入口：全屏内嵌 pdf2zh WebUI（/translate/）===== */
+/* ===== module: xlate ===== */
+/* ===== 内置 PDF 双语翻译：客户端抽取 + 站点自带翻译接口 ===== */
 (function () {
   'use strict';
-  var URL_DEFAULT = '/translator/';
-  var url = URL_DEFAULT;
-  var loaded = false;
+  var API = '/api/translate';
+  var BATCH = 8;                 // 每次请求的段落数
+  var PDFJS_SRC = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+  var PDFJS_WORKER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+  var LANGS = [
+    ['auto', '自动检测'], ['en', '英语'], ['ja', '日语'], ['ko', '韩语'], ['fr', '法语'],
+    ['de', '德语'], ['es', '西班牙语'], ['ru', '俄语'], ['zh-Hans', '中文(简)']
+  ];
+  var TARGETS = [['zh-Hans', '中文(简体)'], ['zh-Hant', '中文(繁体)'], ['en', '英语'], ['ja', '日语']];
 
   var T = {
-    zh: { chip: 'PDF 双语翻译', sub: 'Bing 免费·排版 1:1', title: 'PDF 双语翻译 · pdf2zh',
-          note: '拖入 PDF → 点 Translate；首次加载较慢（服务启动中）',
-          open: '新标签页打开', reload: '重新加载', close: '关闭', loading: '正在加载翻译服务…' },
-    en: { chip: 'PDF Translator', sub: 'Bing · layout 1:1', title: 'PDF Bilingual Translator · pdf2zh',
-          note: 'Drop a PDF → hit Translate. First load can be slow while the service boots.',
-          open: 'Open in new tab', reload: 'Reload', close: 'Close', loading: 'Loading translator…' }
+    zh: {
+      chip: 'PDF 双语翻译', sub: '内置引擎', engine: '· Bing 引擎，无需 Key',
+      pick: '选择 PDF', run: '开始翻译', stop: '停止', exp: '导出 Markdown', close: '关闭',
+      dstH: '译文', ready: '就绪', extracting: '正在解析 PDF…', translating: '正在翻译',
+      done: '翻译完成', stopped: '已停止', noText: '这份 PDF 没有提取到可翻译的文本（可能是扫描件，需要 OCR）',
+      pickTip: '拖入 PDF，或点击选择文件', pasteTip: '也可以直接粘贴文本（支持中/英/日等 → 中文）',
+      err: '出错', needPdfjs: '无法加载 pdf.js（首次使用需联网），可改用「粘贴文本」模式',
+      copied: '已复制', pairs: '段'
+    },
+    en: {
+      chip: 'PDF Translator', sub: 'built-in', engine: '· Bing engine, no key',
+      pick: 'Choose PDF', run: 'Translate', stop: 'Stop', exp: 'Export Markdown', close: 'Close',
+      dstH: 'Translation', ready: 'Ready', extracting: 'Extracting PDF…', translating: 'Translating',
+      done: 'Done', stopped: 'Stopped', noText: 'No extractable text (scanned PDF needs OCR)',
+      pickTip: 'Drop a PDF here, or click to choose', pasteTip: 'Or paste text (any language → Chinese)',
+      err: 'Error', needPdfjs: 'Failed to load pdf.js (needs network). Use paste mode instead.',
+      copied: 'Copied', pairs: 'paragraphs'
+    }
   };
   function lang() { return (document.documentElement.lang || 'zh').indexOf('en') === 0 ? 'en' : 'zh'; }
   function t(k) { return (T[lang()] || T.zh)[k]; }
   function $(id) { return document.getElementById(id); }
 
-  function paint() {
-    $('pm-tr-chip-txt').textContent = t('chip');
-    $('pm-tr-chip-sub').textContent = t('sub');
-    $('pm-tr-title').innerHTML = '<b>' + t('title') + '</b>';
-    $('pm-tr-note').textContent = t('note');
-    $('pm-tr-open').textContent = t('open');
-    $('pm-tr-reload').textContent = t('reload');
-    $('pm-tr-close').textContent = t('close');
-    $('pm-tr-loading').textContent = t('loading');
+  var state = { paras: [], trans: [], running: false, stop: false, name: '' };
+
+  /* ---------- pdf.js ---------- */
+  function loadPdfjs() {
+    return new Promise(function (resolve, reject) {
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        return resolve(window.pdfjsLib);
+      }
+      var s = document.createElement('script');
+      s.src = PDFJS_SRC;
+      s.onload = function () {
+        if (!window.pdfjsLib) return reject(new Error('pdfjs missing'));
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        resolve(window.pdfjsLib);
+      };
+      s.onerror = function () { reject(new Error('pdfjs load failed')); };
+      document.head.appendChild(s);
+    });
   }
 
-  function openModal() {
-    var m = $('pm-tr-modal');
-    m.classList.add('show');
-    if (!loaded) {
-      loaded = true;
-      $('pm-tr-frame').src = url;
-      setTimeout(function () { m.classList.add('ready'); }, 1200);
+  /* ---------- 文本抽取（行 → 段落启发式） ---------- */
+  function linesToParas(lines) {
+    var paras = [], buf = '', lastY = null, heights = [];
+    lines.forEach(function (ln) { if (ln.h) heights.push(ln.h); });
+    heights.sort(function (a, b) { return a - b; });
+    var medH = heights.length ? heights[Math.floor(heights.length / 2)] : 12;
+
+    lines.forEach(function (ln) {
+      var text = (ln.text || '').trim();
+      if (!text) return;
+      if (/^\d{1,4}$/.test(text)) return;                       // 页码
+      var gap = lastY === null ? 0 : (lastY - ln.y);
+      var isBullet = /^([•·\-*]|\(?\d{1,2}[.)])\s+/.test(text);
+      var prevEnds = /[.:;!?。！？；：]$/.test(buf.trim());
+      var newPara = !buf || gap > medH * 1.75 || isBullet ||
+                    (prevEnds && buf.trim().length > 40 && gap > medH * 1.15);
+      if (newPara && buf) { paras.push(buf.trim()); buf = ''; }
+      buf += (buf && !/[\-\u2010-\u2015]$/.test(buf) ? ' ' : '') + text;
+      lastY = ln.y;
+    });
+    if (buf.trim()) paras.push(buf.trim());
+    return paras.filter(function (p) { return p.length > 1; });
+  }
+
+  function extractPdf(pdfjsLib, data) {
+    return pdfjsLib.getDocument({ data: data }).promise.then(function (doc) {
+      var out = [], chain = Promise.resolve();
+      var _loop = function (i) {
+        chain = chain.then(function () {
+          return doc.getPage(i).then(function (page) {
+            return page.getTextContent().then(function (tc) {
+              var lines = [], cur = null;
+              tc.items.forEach(function (it) {
+                var str = it.str;
+                if (!str || !str.trim()) return;
+                var y = it.transform[5], h = Math.abs(it.transform[3]) || 10;
+                if (cur && Math.abs(cur.y - y) < Math.max(3, h * 0.45)) {
+                  cur.text += (/\s$/.test(cur.text) ? '' : ' ') + str;
+                } else {
+                  if (cur) lines.push(cur);
+                  cur = { y: y, h: h, text: str };
+                }
+              });
+              if (cur) lines.push(cur);
+              lines.sort(function (a, b) { return b.y - a.y; });
+              linesToParas(lines).forEach(function (p) { out.push({ page: i, text: p }); });
+              $('pm-xl-status').textContent = t('extracting') + ' ' + i + '/' + doc.numPages;
+            });
+          });
+        });
+      };
+      for (var i = 1; i <= doc.numPages; i++) _loop(i);
+      return chain.then(function () { return out; });
+    });
+  }
+
+  /* ---------- 渲染 ---------- */
+  function renderSrc() {
+    var list = $('pm-xl-src-list');
+    list.innerHTML = state.paras.map(function (p, i) {
+      return '<div class="pair"><div class="src"><span class="tag">P' + p.page + '·' + (i + 1) +
+             '</span>' + esc(p.text) + '</div></div>';
+    }).join('');
+    $('pm-xl-empty').style.display = state.paras.length ? 'none' : 'flex';
+  }
+  function renderDst() {
+    var list = $('pm-xl-dst-list');
+    list.innerHTML = state.paras.map(function (p, i) {
+      var tr = state.trans[i];
+      return '<div class="pair"><div class="dst' + (tr ? '' : ' wait') + '"><span class="tag">' + (i + 1) +
+             '</span>' + (tr ? esc(tr) : '…') + '</div></div>';
+    }).join('');
+    $('pm-xl-dst-h').textContent = t('dstH');
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>]/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c];
+    });
+  }
+  function setProgress(done, total) {
+    $('pm-xl-prog').style.width = total ? Math.round(done * 100 / total) + '%' : '0';
+    $('pm-xl-count').textContent = done + '/' + total + ' ' + t('pairs');
+  }
+
+  /* ---------- 翻译 ---------- */
+  function translateAll() {
+    if (!state.paras.length || state.running) return;
+    state.running = true; state.stop = false;
+    $('pm-xl-run').disabled = true; $('pm-xl-stop').disabled = false;
+    $('pm-xl-status').textContent = t('translating') + '…';
+
+    var i = 0, total = state.paras.length;
+    function step() {
+      if (state.stop || i >= total) {
+        state.running = false;
+        $('pm-xl-run').disabled = false; $('pm-xl-stop').disabled = true;
+        $('pm-xl-export').disabled = !state.trans.some(Boolean);
+        $('pm-xl-status').textContent = state.stop ? t('stopped') : t('done');
+        return;
+      }
+      var slice = state.paras.slice(i, i + BATCH).map(function (p) { return p.text; });
+      fetch(API, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: slice, from: $('pm-xl-from').value, to: $('pm-xl-to').value })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (d) {
+        (d.translations || []).forEach(function (tr, k) { state.trans[i + k] = tr; });
+        i += slice.length;
+        renderDst(); setProgress(i, total);
+        setTimeout(step, 120);
+      }).catch(function (e) {
+        state.running = false;
+        $('pm-xl-run').disabled = false; $('pm-xl-stop').disabled = true;
+        $('pm-xl-status').textContent = t('err') + ': ' + e.message;
+      });
     }
+    step();
   }
-  function closeModal() { $('pm-tr-modal').classList.remove('show'); }
-  function reloadFrame() {
-    $('pm-tr-modal').classList.remove('ready');
-    $('pm-tr-frame').src = url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now();
-    setTimeout(function () { $('pm-tr-modal').classList.add('ready'); }, 1200);
+
+  function exportMd() {
+    var lines = ['# ' + (state.name || 'PDF') + ' · 双语翻译', ''];
+    state.paras.forEach(function (p, i) {
+      lines.push('> 原文（P' + p.page + '）', '', p.text, '', state.trans[i] || '', '', '---', '');
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (state.name || 'pdf') .replace(/\.pdf$/i, '') + '-bilingual.md';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
   }
+
+  /* ---------- 载入来源 ---------- */
+  function usePdf(file) {
+    state.name = file.name; state.paras = []; state.trans = [];
+    renderSrc(); renderDst(); setProgress(0, 0);
+    $('pm-xl-status').textContent = t('extracting');
+    loadPdfjs().then(function (pdfjsLib) {
+      return file.arrayBuffer().then(function (buf) {
+        return extractPdf(pdfjsLib, new Uint8Array(buf));
+      });
+    }).then(function (paras) {
+      state.paras = paras;
+      if (!paras.length) { $('pm-xl-status').textContent = t('noText'); }
+      else { $('pm-xl-status').textContent = t('ready') + ' · ' + paras.length + ' ' + t('pairs'); }
+      renderSrc(); renderDst(); setProgress(0, paras.length);
+      $('pm-xl-run').disabled = !paras.length;
+    }).catch(function (e) {
+      $('pm-xl-status').textContent = t('err') + ': ' + (e && e.message || e);
+      $('pm-xl-paste').placeholder = t('needPdfjs');
+    });
+  }
+
+  function usePaste() {
+    var txt = $('pm-xl-paste').value || '';
+    var paras = txt.split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+    state.name = 'pasted-text'; state.trans = [];
+    state.paras = paras.map(function (p) { return { page: 1, text: p }; });
+    renderSrc(); renderDst(); setProgress(0, paras.length);
+    $('pm-xl-run').disabled = !paras.length;
+    $('pm-xl-status').textContent = paras.length ? t('ready') + ' · ' + paras.length + ' ' + t('pairs') : t('ready');
+  }
+
+  /* ---------- UI ---------- */
+  function fillSelect(el, opts) {
+    el.innerHTML = opts.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('');
+  }
+  function paint() {
+    $('pm-xl-chip-txt').textContent = t('chip');
+    $('pm-xl-chip-sub').textContent = t('sub');
+    $('pm-xl-title').textContent = t('chip');
+    $('pm-xl-engine').textContent = t('engine');
+    $('pm-xl-pick').textContent = t('pick');
+    $('pm-xl-run').textContent = t('run');
+    $('pm-xl-stop').textContent = t('stop');
+    $('pm-xl-export').textContent = t('exp');
+    $('pm-xl-close').textContent = t('close');
+    $('pm-xl-drop').querySelector('div').textContent = t('pickTip');
+    $('pm-xl-drop').querySelectorAll('div')[1].textContent = t('pasteTip');
+    renderDst();
+  }
+
+  function open() { $('pm-xl').classList.add('show'); }
+  function close() { $('pm-xl').classList.remove('show'); }
 
   function boot() {
+    fillSelect($('pm-xl-from'), LANGS);
+    fillSelect($('pm-xl-to'), TARGETS);
+    $('pm-xl-from').value = 'auto';
+    $('pm-xl-to').value = 'zh-Hans';
     paint();
-    fetch('version.json?_=' + Date.now())
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (c) {
-        if (c && c.translateUrl) { url = c.translateUrl; }
-        if (c && c.translateLabel) { T.zh.chip = c.translateLabel; T.en.chip = c.translateLabel; }
-        paint();
-      })
-      .catch(function () {});
-    $('pm-tr-chip').addEventListener('click', openModal);
-    $('pm-tr-close').addEventListener('click', closeModal);
-    $('pm-tr-reload').addEventListener('click', reloadFrame);
-    $('pm-tr-open').addEventListener('click', function () {
-      window.open(url, '_blank', 'noopener');
+
+    $('pm-xl-chip').addEventListener('click', open);
+    $('pm-xl-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    $('pm-xl-pick').addEventListener('click', function () { $('pm-xl-file').click(); });
+    $('pm-xl-drop').addEventListener('click', function () { $('pm-xl-file').click(); });
+    $('pm-xl-file').addEventListener('change', function (e) {
+      if (e.target.files && e.target.files[0]) usePdf(e.target.files[0]);
     });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeModal();
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      $('pm-xl').addEventListener(ev, function (e) {
+        if (e.dataTransfer && e.dataTransfer.types && Array.prototype.indexOf.call(e.dataTransfer.types, 'Files') >= 0) {
+          e.preventDefault(); $('pm-xl-drop').classList.add('over');
+        }
+      });
     });
+    $('pm-xl').addEventListener('dragleave', function () { $('pm-xl-drop').classList.remove('over'); });
+    $('pm-xl').addEventListener('drop', function (e) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        e.preventDefault(); $('pm-xl-drop').classList.remove('over');
+        usePdf(e.dataTransfer.files[0]);
+      }
+    });
+    $('pm-xl-paste').addEventListener('blur', usePaste);
+    $('pm-xl-run').addEventListener('click', function () {
+      if ($('pm-xl-empty').style.display !== 'none' || !state.paras.length) usePaste();
+      translateAll();
+    });
+    $('pm-xl-stop').addEventListener('click', function () { state.stop = true; });
+    $('pm-xl-export').addEventListener('click', exportMd);
+
     new MutationObserver(paint).observe(document.documentElement,
       { attributes: true, attributeFilter: ['lang'] });
   }

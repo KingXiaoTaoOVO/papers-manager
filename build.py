@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""把 web/src/ 下的注入层（在线更新面板 + PDF 双语翻译入口）注入 v5 完整版，
+"""把 web/src/ 下的注入层（在线更新面板 + 内置 PDF 双语翻译）注入 v5 完整版，
 生成可部署的单文件应用 web/html/index.html。
 
 基底：.scratch/preview/v5-dark.html（论文期刊管理器 v5 完整版，含 82 篇论文数据）
@@ -14,7 +14,7 @@ OUT = os.path.join(ROOT, "web", "html", "index.html")
 # 注入顺序：CSS → DOM → JS（每个模块自带 IIFE，互不干扰）
 MODULES = [
     ("updater", "updater.css", "updater.dom.html", "updater.js"),
-    ("translate", "translate.css", "translate.dom.html", "translate.js"),
+    ("xlate", "xlate.css", "xlate.dom.html", "xlate.js"),
 ]
 
 

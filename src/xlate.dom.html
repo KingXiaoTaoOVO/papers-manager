@@ -1,0 +1,42 @@
+<div id="pm-xl-chip" title="内置 PDF 双语翻译（Bing 引擎，无需 Key）">
+  <svg class="ico" viewBox="0 0 24 24"><path d="M4 5h7M7.5 5v1c0 4-1.5 8-4 11"/><path d="M5 12c2.5 3 5 4.5 8 5.5"/><path d="M13 20l3.5-8 3.5 8M14.2 17h4.6"/></svg>
+  <span class="txt" id="pm-xl-chip-txt">PDF 双语翻译</span>
+  <span class="sub" id="pm-xl-chip-sub">内置引擎</span>
+</div>
+
+<div id="pm-xl" role="dialog" aria-modal="true" aria-label="PDF 双语翻译">
+  <div class="bar">
+    <span><b id="pm-xl-title">PDF 双语翻译</b> <span class="sub" id="pm-xl-engine"></span></span>
+    <span class="sp"></span>
+    <button class="btn" id="pm-xl-pick" type="button">选择 PDF</button>
+    <select id="pm-xl-from" title="源语言"></select>
+    <span style="color:var(--dim)">→</span>
+    <select id="pm-xl-to" title="目标语言"></select>
+    <button class="btn primary" id="pm-xl-run" type="button" disabled>开始翻译</button>
+    <button class="btn" id="pm-xl-stop" type="button" disabled>停止</button>
+    <button class="btn" id="pm-xl-export" type="button" disabled>导出 Markdown</button>
+    <button class="btn" id="pm-xl-close" type="button">关闭</button>
+  </div>
+  <div class="body">
+    <div class="pane" id="pm-xl-src">
+      <div class="empty" id="pm-xl-empty">
+        <div class="drop" id="pm-xl-drop">
+          <div style="font-size:15px;color:var(--fg);margin-bottom:6px">拖入 PDF，或点击选择文件</div>
+          <div>也可以直接粘贴文本（支持中/英/日等 → 中文）</div>
+        </div>
+        <textarea id="pm-xl-paste" placeholder="在此粘贴要翻译的文本，每段之间空一行…"></textarea>
+      </div>
+      <div id="pm-xl-src-list"></div>
+    </div>
+    <div class="pane" id="pm-xl-dst">
+      <h4 id="pm-xl-dst-h">译文</h4>
+      <div id="pm-xl-dst-list"></div>
+    </div>
+  </div>
+  <div class="foot">
+    <span id="pm-xl-status">就绪</span>
+    <span class="prog"><i id="pm-xl-prog"></i></span>
+    <span id="pm-xl-count"></span>
+  </div>
+  <input type="file" id="pm-xl-file" accept="application/pdf" style="display:none">
+</div>

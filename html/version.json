@@ -3,7 +3,5 @@
   "build": "2026-10-13",
   "repo": "KingXiaoTaoOVO/papers-manager",
   "channel": "latest",
-  "translateUrl": "/translator/",
-  "translateLabel": "PDF 双语翻译",
-  "note": "repo 字段填 GitHub 仓库（owner/repo），网站据此检测在线更新；translateUrl 指向内嵌的 pdf2zh 翻译服务（留空则隐藏入口）。"
+  "note": "repo 字段填 GitHub 仓库（owner/repo），网站据此检测在线更新；翻译能力已内置在站点容器中（/api/translate，Bing 引擎），无需外部服务。"
 }
