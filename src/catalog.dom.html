@@ -1,0 +1,154 @@
+<!-- ===== module: catalog.dom.html (学科分类条 / 用户免登录上传 / 管理员门户 / 全球学术检索) ===== -->
+
+<!-- 1. 用户免登录自主上传文献模态弹窗 -->
+<div id="pm-upload-modal" class="pm-modal-overlay">
+  <div class="pm-dialog">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>免登录自主上传文献</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-upload-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body">
+      <div class="pm-form-row">
+        <label class="pm-form-label">文献学科大类 <span class="req">*</span></label>
+        <select id="pm-up-cat" class="pm-select">
+          <option value="人工智能与计算科学">人工智能与计算科学 (AI, Algorithms, Deep Learning)</option>
+          <option value="神经科学与脑科学">神经科学与脑科学 (Neuroscience, Brain, EEG)</option>
+          <option value="心理学与认知行为">心理学与认知行为 (Psychology, Mindfulness, Well-being)</option>
+          <option value="生物医药与生命科学">生物医药与生命科学 (Biomedicine, Genetics, Molecular)</option>
+          <option value="临床医学与公共健康">临床医学与公共健康 (Clinical Medicine, Healthcare)</option>
+          <option value="物理与工程技术">物理与工程技术 (Physics, Sensors, Engineering)</option>
+          <option value="用户贡献与自传文献" selected>用户自选上传/用户文库 (User Library)</option>
+        </select>
+      </div>
+      <div class="pm-grid-2">
+        <div class="pm-form-row">
+          <label class="pm-form-label">中文论文标题 <span class="req">*</span></label>
+          <input type="text" id="pm-up-title-cn" class="pm-input" placeholder="例如：基于自适应注意力的大脑神经信号解码">
+        </div>
+        <div class="pm-form-row">
+          <label class="pm-form-label">英文原版标题</label>
+          <input type="text" id="pm-up-title-en" class="pm-input" placeholder="例如：Adaptive Attention for Neural Signal Decoding">
+        </div>
+      </div>
+      <div class="pm-grid-2">
+        <div class="pm-form-row">
+          <label class="pm-form-label">作者列表 (逗号分隔)</label>
+          <input type="text" id="pm-up-authors" class="pm-input" placeholder="例如：Zhang San, Li Si, John Doe">
+        </div>
+        <div class="pm-form-row">
+          <label class="pm-form-label">期刊 / 来源与年份</label>
+          <div style="display:flex;gap:6px;">
+            <input type="text" id="pm-up-journal" class="pm-input" placeholder="期刊名 (如 Nature)" style="flex:1;">
+            <input type="text" id="pm-up-year" class="pm-input" placeholder="年份" style="width:75px;" value="2026">
+          </div>
+        </div>
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">DOI / PMID 标识符 (可选)</label>
+        <input type="text" id="pm-up-doi" class="pm-input" placeholder="例如：10.1038/s41586-024-xxxxx">
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">上传论文原件 (PDF 或 Word .docx，可选)</label>
+        <input type="file" id="pm-up-file" class="pm-input" accept=".pdf,.docx,.doc">
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">论文核心摘要 (支持中文或英文)</label>
+        <textarea id="pm-up-abstract" class="pm-textarea" rows="4" placeholder="在此粘贴文献的核心摘要内容，方便后续全局检索与一键双语翻译..."></textarea>
+      </div>
+      <div id="pm-up-status" style="font-size:12px;color:var(--dim);display:none;"></div>
+    </div>
+    <div class="pm-dialog-foot">
+      <button type="button" class="pm-btn ghost" id="pm-up-cancel">取消</button>
+      <button type="button" class="pm-btn primary" id="pm-up-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span>立即提交入库</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 全球知名国际学术体系检索 (arXiv + Crossref) 模态弹窗 -->
+<div id="pm-global-modal" class="pm-modal-overlay">
+  <div class="pm-dialog" style="max-width:820px;">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>对接国际知名学术体系 · 全球顶刊论文检索</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-global-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body">
+      <div class="pm-global-search-bar">
+        <input type="text" id="pm-gs-query" class="pm-input" placeholder="支持中英文学术搜索（如：呼吸, 深度学习, attention, meditation, transformer...）">
+        <select id="pm-gs-source" class="pm-select" style="width:160px;flex:none;">
+          <option value="all">全部国际文库体系</option>
+          <option value="arxiv">arXiv 全球预印本</option>
+          <option value="crossref">Crossref 顶刊同行评审</option>
+        </select>
+        <button type="button" id="pm-gs-btn" class="pm-btn primary" style="flex:none;height:38px;padding:0 18px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+        </button>
+      </div>
+      <div id="pm-gs-status" style="font-size:12px;color:var(--dim,#8e8a82);">
+        已连接 arXiv &amp; Crossref (含 Nature, Cell, IEEE, Elsevier, Springer 等千万级学术全文索引)
+      </div>
+      <div id="pm-gs-results" class="pm-global-results">
+        <div style="text-align:center;padding:36px;color:var(--dim);font-size:13px;">
+          输入关键词即可通过国际学术开放 API 即时检索并一键导入本地文库或双语翻译研读
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 管理员管理入口与身份验证弹窗 -->
+<div id="pm-admin-modal" class="pm-modal-overlay">
+  <div class="pm-dialog" style="max-width:440px;">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>管理员工作台</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-admin-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body" id="pm-admin-login-body">
+      <p style="font-size:13px;color:var(--dim);margin:0;">
+        请输入管理员凭据以激活管理模式。激活后可自由删除、增添已有论文与期刊，管理网站索引。
+      </p>
+      <div class="pm-form-row">
+        <label class="pm-form-label">管理员密码</label>
+        <input type="password" id="pm-admin-pass" class="pm-input" placeholder="请输入密码">
+      </div>
+      <div id="pm-admin-err" style="color:#ef4444;font-size:12px;display:none;"></div>
+    </div>
+    <div class="pm-dialog-body" id="pm-admin-panel-body" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:#10b981;font-size:13px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>管理员身份已激活！卡片上已展示专属「删除文献」操作项。</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+        <button type="button" class="pm-btn primary" id="pm-admin-new-paper">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>录入并新增权威学术文献</span>
+        </button>
+        <button type="button" class="pm-btn ghost" id="pm-admin-logout" style="color:#ef4444;justify-content:center;">
+          <span>退出管理员模式</span>
+        </button>
+      </div>
+    </div>
+    <div class="pm-dialog-foot" id="pm-admin-login-foot">
+      <button type="button" class="pm-btn ghost" id="pm-admin-cancel">取消</button>
+      <button type="button" class="pm-btn primary" id="pm-admin-submit">确认登录</button>
+    </div>
+  </div>
+</div>

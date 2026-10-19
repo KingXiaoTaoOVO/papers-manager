@@ -439,8 +439,16 @@
     return arr.length ? arr : [1];
   }
 
-  function extractPdfParas(pdfjsLib, data, pageRangeStr) {
-    return pdfjsLib.getDocument({ data: data }).promise.then(function (doc) {
+  function extractPdfParas(docOrData, pageRangeStr) {
+    var getDocPromise;
+    if (docOrData && typeof docOrData.getPage === 'function') {
+      getDocPromise = Promise.resolve(docOrData);
+    } else {
+      var clonedData = (docOrData && docOrData.slice) ? docOrData.slice(0) : docOrData;
+      getDocPromise = window.pdfjsLib.getDocument({ data: clonedData }).promise;
+    }
+
+    return getDocPromise.then(function (doc) {
       var targetPages = parsePageRange(pageRangeStr, doc.numPages);
       var paras = [], counter = 1;
       var chain = Promise.resolve();
@@ -1027,7 +1035,9 @@
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
         loadPdfjs().then(function (pdfjs) {
-          return pdfjs.getDocument({ data: state.fileBytes }).promise;
+          // 传递 buffer 副本给 getDocument，避免 Web Worker transfer 导致主线程 ArrayBuffer 被 detach
+          var clonedBuf = (state.fileBytes && state.fileBytes.slice) ? state.fileBytes.slice(0) : state.fileBytes;
+          return pdfjs.getDocument({ data: clonedBuf }).promise;
         }).then(function (pdfDoc) {
           state.pdfDoc = pdfDoc;
           state.totalPages = pdfDoc.numPages;
@@ -1046,14 +1056,18 @@
           renderPdfPage(1);
 
           var pagesVal = ($('pm-xl-pages').value || '').trim();
-          extractPdfParas(window.pdfjsLib, state.fileBytes, pagesVal).then(function (paras) {
+          extractPdfParas(pdfDoc, pagesVal).then(function (paras) {
             state.paras = paras;
             renderParas();
             updateStatus('PDF 解析就绪，共 ' + state.totalPages + ' 页 / ' + paras.length + ' 个学术段落');
             $('pm-xl-run').disabled = false;
             checkCloudSharedCache(state.activePaperKey);
+          }).catch(function (pErr) {
+            console.error('PDF 段落提取异常:', pErr);
+            updateStatus('PDF 段落提取异常: ' + pErr.message);
           });
         }).catch(function (err) {
+          console.error('PDF 解析失败:', err);
           updateStatus('PDF 解析失败: ' + err.message);
         });
       };
@@ -1392,6 +1406,69 @@
     a.click();
     setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1000);
   }
+
+  function loadPaperForTranslation(paper) {
+    if (!paper) return;
+    openStudio();
+    var title = paper.titleCN || paper.titleEN || paper.fileName || '学术文献';
+    var titleEl = $('pm-xl-doc-title');
+    if (titleEl) titleEl.textContent = title;
+    var badgeEl = $('pm-xl-doc-badge');
+    if (badgeEl) badgeEl.textContent = (paper.journal || paper.category || '学术精选文献') + (paper.year ? ' · ' + paper.year : '');
+
+    var dropEl = $('pm-xl-drop');
+    if (dropEl) dropEl.style.display = 'none';
+    var fileCard = $('pm-xl-file-card');
+    if (fileCard) fileCard.style.display = 'flex';
+    var fnEl = $('pm-xl-filename');
+    if (fnEl) fnEl.textContent = paper.fileName || (title + '.docx');
+    var fsEl = $('pm-xl-filesize');
+    if (fsEl) fsEl.textContent = paper.journal ? (paper.journal + (paper.doi ? ' · DOI:' + paper.doi : '')) : '内置精选文献';
+
+    state.fileType = (paper.ext === 'pdf') ? 'pdf' : 'docx';
+    state.activePaperKey = paper.doi || ('paper_' + (paper.id || paper.fileName));
+    state.paras = [];
+    state.trans = [];
+
+    var rawParas = [];
+    if (Array.isArray(paper.paras) && paper.paras.length) {
+      rawParas = paper.paras;
+    } else if (paper.fullText) {
+      rawParas = paper.fullText.split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    } else {
+      if (paper.titleEN) rawParas.push(paper.titleEN);
+      if (paper.abstractEN) {
+        var segs = paper.abstractEN.split(/(?<=[.!?])\s+/);
+        rawParas = rawParas.concat(segs);
+      } else if (paper.abstract) {
+        rawParas = rawParas.concat(paper.abstract.split(/\n+/));
+      }
+    }
+
+    if (rawParas.length) {
+      var counter = 1;
+      state.paras = rawParas.map(function (item) {
+        var txt = (typeof item === 'string') ? item : (item.text || String(item));
+        var isHead = (typeof item === 'object' && item.isHeading) || (txt.length < 80 && /^(Abstract|Introduction|Methods|Results|Discussion|References|Conclusion|\d+(\.\d+)*\s+[A-Z])/i.test(txt));
+        return {
+          id: counter++,
+          text: txt,
+          isHeading: isHead,
+          isMath: /[\$\=∑∫∂√α-ω]/.test(txt)
+        };
+      });
+      renderParas();
+      setViewMode('dual');
+      $('pm-xl-run').disabled = false;
+      updateStatus('文献《' + title.slice(0, 24) + '...》已成功载入翻译研读舱，共 ' + state.paras.length + ' 个学术段落');
+      checkCloudSharedCache(state.activePaperKey);
+    } else {
+      updateStatus('文献已载入，准备翻译');
+    }
+  }
+
+  window.openXlateStudio = openStudio;
+  window.openXlateStudioWithPaper = loadPaperForTranslation;
 
   // DOM 就绪启动
   if (document.readyState === 'loading') {

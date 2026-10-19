@@ -1,0 +1,341 @@
+/* ===== module: catalog.css (学科分类大类导航 / 用户免登录上传 / 管理员门户 / 全球学术检索 / 中英智能互通) ===== */
+
+/* 1. 学科大类分类筛选栏 */
+#pm-cat-strip {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 16px auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+.pm-cat-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--popover, rgba(20, 19, 18, 0.85));
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.pm-cat-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+.pm-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--glass, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  color: var(--dim, #a6a29a);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.pm-cat-pill:hover {
+  background: var(--accSoft, rgba(201, 168, 106, 0.12));
+  border-color: var(--acc, #c9a86a);
+  color: var(--fg, #f3f0e6);
+}
+.pm-cat-pill.active {
+  background: rgba(201, 168, 106, 0.18);
+  border-color: var(--acc, #c9a86a);
+  color: var(--acc, #c9a86a);
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(201, 168, 106, 0.22);
+}
+.pm-cat-pill svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+  flex: none;
+}
+.pm-cat-pill .pm-pill-cnt {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--dim, #8e8a82);
+  font-weight: 600;
+}
+.pm-cat-pill.active .pm-pill-cnt {
+  background: var(--acc, #c9a86a);
+  color: #121110;
+}
+
+/* 顶部操作区 */
+.pm-cat-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.pm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.12));
+  background: var(--glass, rgba(255, 255, 255, 0.06));
+  color: var(--fg, #e6e2d8);
+  white-space: nowrap;
+}
+.pm-action-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.pm-action-btn.gold {
+  background: linear-gradient(135deg, rgba(201, 168, 106, 0.25), rgba(201, 168, 106, 0.08));
+  border-color: rgba(201, 168, 106, 0.5);
+  color: var(--acc, #c9a86a);
+}
+.pm-action-btn.gold:hover {
+  border-color: var(--acc, #c9a86a);
+  box-shadow: 0 0 12px rgba(201, 168, 106, 0.25);
+}
+.pm-action-btn.green {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+.pm-action-btn.green:hover {
+  border-color: #10b981;
+}
+.pm-action-btn.admin-on {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+/* 2. 卡片中的一键双语翻译 & 管理员删除按钮 */
+.act.pm-act-xlate {
+  background: rgba(201, 168, 106, 0.14) !important;
+  border-color: rgba(201, 168, 106, 0.45) !important;
+  color: var(--acc, #c9a86a) !important;
+  font-weight: 600 !important;
+}
+.act.pm-act-xlate:hover {
+  background: var(--acc, #c9a86a) !important;
+  color: #121110 !important;
+}
+.act.pm-act-del {
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+.act.pm-act-del:hover {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+/* 3. 模态弹窗通用样式 */
+.pm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 6, 6, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 16px;
+  animation: pmFadeIn 0.2s ease;
+}
+.pm-modal-overlay.open {
+  display: flex;
+}
+@keyframes pmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.pm-dialog {
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--popover, #151413);
+  border: 1px solid var(--stroke, rgba(201, 168, 106, 0.25));
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: var(--fg, #e6e2d8);
+  overflow: hidden;
+  animation: pmSlideUp 0.22s ease;
+}
+@keyframes pmSlideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.pm-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+}
+.pm-dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--acc, #c9a86a);
+}
+.pm-dialog-close {
+  background: none;
+  border: none;
+  color: var(--dim, #8e8a82);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.pm-dialog-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg, #fff);
+}
+.pm-dialog-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pm-dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* 表单组件 */
+.pm-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pm-form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--dim, #a6a29a);
+}
+.pm-form-label span.req {
+  color: #ef4444;
+  margin-left: 3px;
+}
+.pm-input, .pm-select, .pm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--fg, #f3f0e6);
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s;
+}
+.pm-input:focus, .pm-select:focus, .pm-textarea:focus {
+  border-color: var(--acc, #c9a86a);
+  box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.15);
+}
+.pm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .pm-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* 全球学术检索列表 */
+.pm-global-search-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pm-global-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.pm-res-card {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.18s;
+}
+.pm-res-card:hover {
+  border-color: rgba(201, 168, 106, 0.4);
+}
+.pm-res-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg, #f3f0e6);
+  line-height: 1.45;
+}
+.pm-res-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--dim, #8e8a82);
+  flex-wrap: wrap;
+}
+.pm-res-meta .badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(201, 168, 106, 0.12);
+  color: var(--acc, #c9a86a);
+  font-weight: 600;
+}
+.pm-res-abs {
+  font-size: 12.5px;
+  color: var(--dim, #b2ada3);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pm-res-acts {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+}

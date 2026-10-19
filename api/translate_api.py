@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Papers Manager 学术文献翻译与多人协同服务端 (v5.3.0)
+Papers Manager 学术文献翻译与多人协同服务端 (v5.4.0)
 ------------------------------------------------------
 功能特性：
   1. 多引擎翻译：
@@ -113,6 +113,172 @@ def _save_persist():
         sys.stderr.write(f"[persist] save error: {e}\n")
 
 _load_persist()
+
+# -----------------------------------------------------------------------------
+# 论文库动态存储与管理员状态
+# -----------------------------------------------------------------------------
+PAPERS_FILES_DIR = os.path.join(DATA_DIR, "papers_files")
+os.makedirs(PAPERS_FILES_DIR, exist_ok=True)
+USER_PAPERS_FILE = os.path.join(DATA_DIR, "user_papers.json")
+PAPERS_META_FILE = os.path.join(DATA_DIR, "papers_meta.json")
+
+ADMIN_PASS = os.environ.get("PAPERS_ADMIN_PASS", "root@panel")
+_admin_tokens = set()
+_user_papers = []          # 用户/管理员上传的文献列表
+_deleted_paper_ids = set() # 被删除的文献 ID 集合（支持内置和用户文献）
+
+def _load_papers_state():
+    global _user_papers, _deleted_paper_ids
+    if os.path.exists(USER_PAPERS_FILE):
+        try:
+            with open(USER_PAPERS_FILE, "r", encoding="utf-8") as f:
+                _user_papers = json.load(f)
+        except Exception as e:
+            sys.stderr.write(f"[papers] load user_papers error: {e}\n")
+    if os.path.exists(PAPERS_META_FILE):
+        try:
+            with open(PAPERS_META_FILE, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+                _deleted_paper_ids = set(str(x) for x in meta.get("deleted_ids", []))
+        except Exception as e:
+            sys.stderr.write(f"[papers] load meta error: {e}\n")
+
+def _save_papers_state():
+    try:
+        with open(USER_PAPERS_FILE, "w", encoding="utf-8") as f:
+            json.dump(_user_papers, f, ensure_ascii=False, indent=2)
+        with open(PAPERS_META_FILE, "w", encoding="utf-8") as f:
+            json.dump({"deleted_ids": list(_deleted_paper_ids)}, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        sys.stderr.write(f"[papers] save error: {e}\n")
+
+_load_papers_state()
+
+def infer_academic_category(text):
+    """根据文献标题、摘要及关键词推断学科大类"""
+    t = (text or "").lower()
+    if re.search(r"\b(ieee|neural network|deep learning|machine learning|computing|affective computing|algorithm|artificial intelligence|transformer|llm|computer vision|reinforcement|人工智能|深度学习|计算|模型|神经网络)\b", t):
+        return "人工智能与计算科学"
+    if re.search(r"\b(neuro|brain|eeg|cortex|cerebr|synapse|cognitive neuroscience|fmri|脑|神经|皮层|脑电)\b", t):
+        return "神经科学与脑科学"
+    if re.search(r"\b(psychol|well-being|mindful|meditat|depress|anxiety|stress|emotion|affect|happiness|resilience|心理|冥想|正念|幸福感|情绪|行为|疲劳|压力)\b", t):
+        return "心理学与认知行为"
+    if re.search(r"\b(lancet|jama|clinical|medicine|health|trial|patient|therapy|rct|disease|mortality|epidemiology|cancer|cardiac|public health|医学|临床|健康|治疗|患者|精神医学)\b", t):
+        return "临床医学与公共健康"
+    if re.search(r"\b(cell|gene|protein|dna|rna|molecular|bio|biomarker|crispr|pharmac|生命|细胞|生物|基因|蛋白)\b", t):
+        return "生物医药与生命科学"
+    if re.search(r"\b(sensor|physic|engineering|device|material|quantum|optics|nanomaterial|mechanics|semiconductor|传感器|工程|器件|物理)\b", t):
+        return "物理与工程技术"
+    return "人工智能与计算科学"
+
+def search_crossref_api(query_str, limit=10):
+    """对接 Crossref 国际学术元数据开放接口 (涵盖 Nature, IEEE, Elsevier, Springer 等顶刊)"""
+    url = f"https://api.crossref.org/works?query={urllib.parse.quote(query_str)}&rows={limit}"
+    req = urllib.request.Request(url, headers={"User-Agent": "PapersManager/5.4 (mailto:admin@pcb.im)"})
+    with urllib.request.urlopen(req, timeout=12) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    items = []
+    for it in data.get("message", {}).get("items", []):
+        doi = it.get("DOI", "")
+        title_list = it.get("title", [])
+        title = title_list[0] if title_list else ""
+        if not title:
+            continue
+        authors = []
+        for a in it.get("author", []):
+            name = (a.get("given", "") + " " + a.get("family", "")).strip() or a.get("name", "")
+            if name:
+                authors.append(name)
+        journals = it.get("container-title", [])
+        journal = journals[0] if journals else "Academic Journal"
+        year = ""
+        dp = it.get("published", {}).get("date-parts", []) or it.get("created", {}).get("date-parts", [])
+        if dp and dp[0]:
+            year = str(dp[0][0])
+        raw_abs = it.get("abstract", "")
+        clean_abs = re.sub(r"<[^>]+>", "", raw_abs).strip()
+        items.append({
+            "id": f"cr_{doi.replace('/', '_')}",
+            "titleEN": title,
+            "titleCN": "",
+            "authors": authors[:5],
+            "journal": journal,
+            "year": year or time.strftime("%Y"),
+            "abstractEN": clean_abs,
+            "abstractCN": "",
+            "abstract": clean_abs,
+            "doi": doi,
+            "url": it.get("URL") or f"https://doi.org/{doi}",
+            "source": "Crossref 国际文库",
+            "category": infer_academic_category(title + " " + clean_abs)
+        })
+    return items
+
+def search_arxiv_api(query_str, limit=10):
+    """对接 arXiv 国际顶尖学术预印本文库接口"""
+    url = f"http://export.arxiv.org/api/query?search_query=all:{urllib.parse.quote(query_str)}&start=0&max_results={limit}&sortBy=relevance"
+    req = urllib.request.Request(url, headers={"User-Agent": "PapersManager/5.4"})
+    with urllib.request.urlopen(req, timeout=12) as resp:
+        xml_data = resp.read()
+    root = ET.fromstring(xml_data)
+    ns = {"atom": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
+    items = []
+    for entry in root.findall("atom:entry", ns):
+        title_el = entry.find("atom:title", ns)
+        title = re.sub(r"\s+", " ", title_el.text or "").strip() if title_el is not None else ""
+        if not title:
+            continue
+        summary_el = entry.find("atom:summary", ns)
+        summary = re.sub(r"\s+", " ", summary_el.text or "").strip() if summary_el is not None else ""
+        pub_el = entry.find("atom:published", ns)
+        year = pub_el.text[:4] if pub_el is not None and pub_el.text else time.strftime("%Y")
+        authors = []
+        for a in entry.findall("atom:author", ns):
+            nm = a.find("atom:name", ns)
+            if nm is not None and nm.text:
+                authors.append(nm.text.strip())
+        id_el = entry.find("atom:id", ns)
+        arxiv_raw_id = id_el.text.strip() if id_el is not None and id_el.text else ""
+        arxiv_id = os.path.basename(arxiv_raw_id)
+        pdf_url = f"https://arxiv.org/pdf/{arxiv_id}.pdf" if arxiv_id else ""
+        items.append({
+            "id": f"arxiv_{arxiv_id}",
+            "titleEN": title,
+            "titleCN": "",
+            "authors": authors[:5],
+            "journal": "arXiv Preprint",
+            "year": year,
+            "abstractEN": summary,
+            "abstractCN": "",
+            "abstract": summary,
+            "doi": f"10.48550/arXiv.{arxiv_id}" if arxiv_id else "",
+            "pdfUrl": pdf_url,
+            "url": arxiv_raw_id,
+            "source": "arXiv 全球预印本",
+            "category": infer_academic_category(title + " " + summary)
+        })
+    return items
+
+def expand_bilingual_query(q):
+    """学术搜索词中英双向智能互通拓展"""
+    q = (q or "").strip()
+    if not q:
+        return "", ""
+    has_cn = bool(re.search(r"[\u4e00-\u9fa5]", q))
+    en_q = q
+    cn_q = q
+    if has_cn:
+        try:
+            en_q = bing_translate_single(q, src="zh-Hans", dst="en")
+        except Exception:
+            en_q = q
+    else:
+        try:
+            cn_q = bing_translate_single(q, src="en", dst="zh-Hans")
+        except Exception:
+            cn_q = q
+    return cn_q, en_q
+
 
 
 # ==============================================================================
@@ -490,9 +656,64 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if fname.endswith(".docx") else "application/pdf"
             return self._send(200, raw_bytes=content, content_type=ctype)
 
+        # 6. 文献列表与已删除清单获取
+        if path == "/api/papers/list":
+            return self._send(200, {
+                "ok": True,
+                "user_papers": _user_papers,
+                "deleted_ids": list(_deleted_paper_ids)
+            })
+
+        # 7. 用户上传文献原件下载
+        if path.startswith("/api/papers/download/"):
+            fname = os.path.basename(path)
+            fpath = os.path.join(PAPERS_FILES_DIR, fname)
+            if not os.path.exists(fpath):
+                return self._send(404, {"error": "file not found"})
+            with open(fpath, "rb") as f:
+                content = f.read()
+            ctype = "application/pdf" if fname.endswith(".pdf") else "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            return self._send(200, raw_bytes=content, content_type=ctype)
+
+        # 8. 全球知名论文体系搜索 (arXiv + Crossref 开放 API)
+        if path == "/api/papers/search_global":
+            q = query.get("q", [""])[0].strip()
+            source = query.get("source", ["all"])[0].strip()
+            limit = min(25, max(1, int(query.get("limit", [10])[0])))
+            if not q:
+                return self._send(200, {"ok": True, "papers": []})
+            cn_q, en_q = expand_bilingual_query(q)
+            results = []
+            search_kw = en_q or q
+            if source in ("all", "arxiv"):
+                try:
+                    results.extend(search_arxiv_api(search_kw, limit=limit))
+                except Exception as e:
+                    sys.stderr.write(f"[arxiv_search] error: {e}\n")
+            if source in ("all", "crossref"):
+                try:
+                    results.extend(search_crossref_api(search_kw, limit=limit))
+                except Exception as e:
+                    sys.stderr.write(f"[crossref_search] error: {e}\n")
+            return self._send(200, {
+                "ok": True,
+                "query": q,
+                "query_cn": cn_q,
+                "query_en": en_q,
+                "total": len(results),
+                "papers": results
+            })
+
+        # 9. 中英学术词汇双向智能扩展
+        if path == "/api/papers/expand_query":
+            q = query.get("q", [""])[0].strip()
+            cn_q, en_q = expand_bilingual_query(q)
+            return self._send(200, {"ok": True, "query": q, "cn": cn_q, "en": en_q})
+
         return self._send(404, {"error": "not found"})
 
     def do_POST(self):
+        global _user_papers, _deleted_paper_ids, _admin_tokens
         path = self.path.split("?")[0]
         try:
             length = int(self.headers.get("Content-Length") or 0)
@@ -629,6 +850,84 @@ class Handler(BaseHTTPRequestHandler):
                 _collab_notes[paper_id] = _collab_notes[paper_id][:100]
             _save_persist()
             return self._send(200, {"ok": True, "note": note_item})
+
+        # 6. 管理员登录与认证
+        if path == "/api/admin/auth":
+            pwd = (payload.get("password") or "").strip()
+            if pwd == ADMIN_PASS:
+                token = "adm_" + uuid.uuid4().hex
+                with _lock:
+                    _admin_tokens.add(token)
+                return self._send(200, {"ok": True, "token": token, "msg": "管理员认证成功"})
+            return self._send(401, {"ok": False, "error": "管理员密码错误"})
+
+        # 7. 用户免登录自主上传文献
+        if path == "/api/papers/upload":
+            title = (payload.get("title") or "").strip()
+            titleCN = (payload.get("titleCN") or title).strip()
+            titleEN = (payload.get("titleEN") or "").strip()
+            authors = payload.get("authors") or []
+            journal = (payload.get("journal") or "用户贡献文库").strip()
+            year = str(payload.get("year") or time.strftime("%Y"))
+            category = payload.get("category") or "用户贡献与自传文献"
+            abstractCN = (payload.get("abstractCN") or payload.get("abstract") or "").strip()
+            abstractEN = (payload.get("abstractEN") or "").strip()
+            abstract = payload.get("abstract") or (abstractCN + ("\n\n" + abstractEN if abstractEN else ""))
+            doi = (payload.get("doi") or "").strip()
+            file_b64 = payload.get("fileBase64")
+            file_name = payload.get("fileName") or ""
+            pid = f"usr_{uuid.uuid4().hex[:8]}"
+            file_url = ""
+            if file_b64:
+                safe_name = re.sub(r'[^\w\.\-\_]', '_', file_name) or "paper.pdf"
+                file_path = os.path.join(PAPERS_FILES_DIR, f"{pid}_{safe_name}")
+                try:
+                    with open(file_path, "wb") as f:
+                        f.write(base64.b64decode(file_b64))
+                    file_url = f"/api/papers/download/{pid}_{safe_name}"
+                except Exception as e:
+                    sys.stderr.write(f"[upload] file save error: {e}\n")
+
+            if isinstance(authors, str):
+                authors = [a.strip() for a in re.split(r"[,;，；]", authors) if a.strip()]
+
+            paper = {
+                "id": pid,
+                "titleCN": titleCN,
+                "titleEN": titleEN,
+                "authors": authors,
+                "journal": journal,
+                "year": year,
+                "category": category,
+                "abstractCN": abstractCN,
+                "abstractEN": abstractEN,
+                "abstract": abstract,
+                "doi": doi,
+                "fileName": file_name or (titleCN + ".docx"),
+                "fileUrl": file_url,
+                "isUserUpload": True,
+                "status": "ok",
+                "createdAt": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            with _lock:
+                _user_papers.insert(0, paper)
+            _save_papers_state()
+            return self._send(200, {"ok": True, "paper": paper})
+
+        # 8. 管理员删除文献（支持删除用户上传文献或屏蔽内置文献）
+        if path == "/api/papers/delete":
+            token = payload.get("token") or self.headers.get("x-admin-token")
+            pwd = payload.get("password")
+            if not (token in _admin_tokens or pwd == ADMIN_PASS):
+                return self._send(403, {"ok": False, "error": "需要管理员权限"})
+            pid = str(payload.get("id"))
+            if not pid:
+                return self._send(400, {"error": "id required"})
+            with _lock:
+                _user_papers = [p for p in _user_papers if str(p.get("id")) != pid]
+                _deleted_paper_ids.add(pid)
+            _save_papers_state()
+            return self._send(200, {"ok": True, "deleted": pid})
 
         return self._send(404, {"error": "not found"})
 

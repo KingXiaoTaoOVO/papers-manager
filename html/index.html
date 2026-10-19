@@ -1849,6 +1849,349 @@ details summary:hover{color:var(--acc)}
   text-align: center;
 }
 
+/* ===== module: catalog ===== */
+/* ===== module: catalog.css (学科分类大类导航 / 用户免登录上传 / 管理员门户 / 全球学术检索 / 中英智能互通) ===== */
+
+/* 1. 学科大类分类筛选栏 */
+#pm-cat-strip {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 16px auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+.pm-cat-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--popover, rgba(20, 19, 18, 0.85));
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.pm-cat-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+.pm-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--glass, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  color: var(--dim, #a6a29a);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.pm-cat-pill:hover {
+  background: var(--accSoft, rgba(201, 168, 106, 0.12));
+  border-color: var(--acc, #c9a86a);
+  color: var(--fg, #f3f0e6);
+}
+.pm-cat-pill.active {
+  background: rgba(201, 168, 106, 0.18);
+  border-color: var(--acc, #c9a86a);
+  color: var(--acc, #c9a86a);
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(201, 168, 106, 0.22);
+}
+.pm-cat-pill svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+  flex: none;
+}
+.pm-cat-pill .pm-pill-cnt {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--dim, #8e8a82);
+  font-weight: 600;
+}
+.pm-cat-pill.active .pm-pill-cnt {
+  background: var(--acc, #c9a86a);
+  color: #121110;
+}
+
+/* 顶部操作区 */
+.pm-cat-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.pm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.12));
+  background: var(--glass, rgba(255, 255, 255, 0.06));
+  color: var(--fg, #e6e2d8);
+  white-space: nowrap;
+}
+.pm-action-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.pm-action-btn.gold {
+  background: linear-gradient(135deg, rgba(201, 168, 106, 0.25), rgba(201, 168, 106, 0.08));
+  border-color: rgba(201, 168, 106, 0.5);
+  color: var(--acc, #c9a86a);
+}
+.pm-action-btn.gold:hover {
+  border-color: var(--acc, #c9a86a);
+  box-shadow: 0 0 12px rgba(201, 168, 106, 0.25);
+}
+.pm-action-btn.green {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+.pm-action-btn.green:hover {
+  border-color: #10b981;
+}
+.pm-action-btn.admin-on {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+/* 2. 卡片中的一键双语翻译 & 管理员删除按钮 */
+.act.pm-act-xlate {
+  background: rgba(201, 168, 106, 0.14) !important;
+  border-color: rgba(201, 168, 106, 0.45) !important;
+  color: var(--acc, #c9a86a) !important;
+  font-weight: 600 !important;
+}
+.act.pm-act-xlate:hover {
+  background: var(--acc, #c9a86a) !important;
+  color: #121110 !important;
+}
+.act.pm-act-del {
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+.act.pm-act-del:hover {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+/* 3. 模态弹窗通用样式 */
+.pm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 6, 6, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 16px;
+  animation: pmFadeIn 0.2s ease;
+}
+.pm-modal-overlay.open {
+  display: flex;
+}
+@keyframes pmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.pm-dialog {
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--popover, #151413);
+  border: 1px solid var(--stroke, rgba(201, 168, 106, 0.25));
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: var(--fg, #e6e2d8);
+  overflow: hidden;
+  animation: pmSlideUp 0.22s ease;
+}
+@keyframes pmSlideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.pm-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+}
+.pm-dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--acc, #c9a86a);
+}
+.pm-dialog-close {
+  background: none;
+  border: none;
+  color: var(--dim, #8e8a82);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.pm-dialog-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg, #fff);
+}
+.pm-dialog-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pm-dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* 表单组件 */
+.pm-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pm-form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--dim, #a6a29a);
+}
+.pm-form-label span.req {
+  color: #ef4444;
+  margin-left: 3px;
+}
+.pm-input, .pm-select, .pm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--fg, #f3f0e6);
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s;
+}
+.pm-input:focus, .pm-select:focus, .pm-textarea:focus {
+  border-color: var(--acc, #c9a86a);
+  box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.15);
+}
+.pm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .pm-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* 全球学术检索列表 */
+.pm-global-search-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pm-global-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.pm-res-card {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--stroke, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.18s;
+}
+.pm-res-card:hover {
+  border-color: rgba(201, 168, 106, 0.4);
+}
+.pm-res-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg, #f3f0e6);
+  line-height: 1.45;
+}
+.pm-res-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--dim, #8e8a82);
+  flex-wrap: wrap;
+}
+.pm-res-meta .badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(201, 168, 106, 0.12);
+  color: var(--acc, #c9a86a);
+  font-weight: 600;
+}
+.pm-res-abs {
+  font-size: 12.5px;
+  color: var(--dim, #b2ada3);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pm-res-acts {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+
 </style>
 </head>
 <body>
@@ -4237,6 +4580,162 @@ setTheme('dark');
   </div>
 </div>
 
+<!-- module: catalog -->
+<!-- ===== module: catalog.dom.html (学科分类条 / 用户免登录上传 / 管理员门户 / 全球学术检索) ===== -->
+
+<!-- 1. 用户免登录自主上传文献模态弹窗 -->
+<div id="pm-upload-modal" class="pm-modal-overlay">
+  <div class="pm-dialog">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>免登录自主上传文献</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-upload-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body">
+      <div class="pm-form-row">
+        <label class="pm-form-label">文献学科大类 <span class="req">*</span></label>
+        <select id="pm-up-cat" class="pm-select">
+          <option value="人工智能与计算科学">人工智能与计算科学 (AI, Algorithms, Deep Learning)</option>
+          <option value="神经科学与脑科学">神经科学与脑科学 (Neuroscience, Brain, EEG)</option>
+          <option value="心理学与认知行为">心理学与认知行为 (Psychology, Mindfulness, Well-being)</option>
+          <option value="生物医药与生命科学">生物医药与生命科学 (Biomedicine, Genetics, Molecular)</option>
+          <option value="临床医学与公共健康">临床医学与公共健康 (Clinical Medicine, Healthcare)</option>
+          <option value="物理与工程技术">物理与工程技术 (Physics, Sensors, Engineering)</option>
+          <option value="用户贡献与自传文献" selected>用户自选上传/用户文库 (User Library)</option>
+        </select>
+      </div>
+      <div class="pm-grid-2">
+        <div class="pm-form-row">
+          <label class="pm-form-label">中文论文标题 <span class="req">*</span></label>
+          <input type="text" id="pm-up-title-cn" class="pm-input" placeholder="例如：基于自适应注意力的大脑神经信号解码">
+        </div>
+        <div class="pm-form-row">
+          <label class="pm-form-label">英文原版标题</label>
+          <input type="text" id="pm-up-title-en" class="pm-input" placeholder="例如：Adaptive Attention for Neural Signal Decoding">
+        </div>
+      </div>
+      <div class="pm-grid-2">
+        <div class="pm-form-row">
+          <label class="pm-form-label">作者列表 (逗号分隔)</label>
+          <input type="text" id="pm-up-authors" class="pm-input" placeholder="例如：Zhang San, Li Si, John Doe">
+        </div>
+        <div class="pm-form-row">
+          <label class="pm-form-label">期刊 / 来源与年份</label>
+          <div style="display:flex;gap:6px;">
+            <input type="text" id="pm-up-journal" class="pm-input" placeholder="期刊名 (如 Nature)" style="flex:1;">
+            <input type="text" id="pm-up-year" class="pm-input" placeholder="年份" style="width:75px;" value="2026">
+          </div>
+        </div>
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">DOI / PMID 标识符 (可选)</label>
+        <input type="text" id="pm-up-doi" class="pm-input" placeholder="例如：10.1038/s41586-024-xxxxx">
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">上传论文原件 (PDF 或 Word .docx，可选)</label>
+        <input type="file" id="pm-up-file" class="pm-input" accept=".pdf,.docx,.doc">
+      </div>
+      <div class="pm-form-row">
+        <label class="pm-form-label">论文核心摘要 (支持中文或英文)</label>
+        <textarea id="pm-up-abstract" class="pm-textarea" rows="4" placeholder="在此粘贴文献的核心摘要内容，方便后续全局检索与一键双语翻译..."></textarea>
+      </div>
+      <div id="pm-up-status" style="font-size:12px;color:var(--dim);display:none;"></div>
+    </div>
+    <div class="pm-dialog-foot">
+      <button type="button" class="pm-btn ghost" id="pm-up-cancel">取消</button>
+      <button type="button" class="pm-btn primary" id="pm-up-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span>立即提交入库</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 全球知名国际学术体系检索 (arXiv + Crossref) 模态弹窗 -->
+<div id="pm-global-modal" class="pm-modal-overlay">
+  <div class="pm-dialog" style="max-width:820px;">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>对接国际知名学术体系 · 全球顶刊论文检索</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-global-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body">
+      <div class="pm-global-search-bar">
+        <input type="text" id="pm-gs-query" class="pm-input" placeholder="支持中英文学术搜索（如：呼吸, 深度学习, attention, meditation, transformer...）">
+        <select id="pm-gs-source" class="pm-select" style="width:160px;flex:none;">
+          <option value="all">全部国际文库体系</option>
+          <option value="arxiv">arXiv 全球预印本</option>
+          <option value="crossref">Crossref 顶刊同行评审</option>
+        </select>
+        <button type="button" id="pm-gs-btn" class="pm-btn primary" style="flex:none;height:38px;padding:0 18px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+        </button>
+      </div>
+      <div id="pm-gs-status" style="font-size:12px;color:var(--dim,#8e8a82);">
+        已连接 arXiv &amp; Crossref (含 Nature, Cell, IEEE, Elsevier, Springer 等千万级学术全文索引)
+      </div>
+      <div id="pm-gs-results" class="pm-global-results">
+        <div style="text-align:center;padding:36px;color:var(--dim);font-size:13px;">
+          输入关键词即可通过国际学术开放 API 即时检索并一键导入本地文库或双语翻译研读
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 管理员管理入口与身份验证弹窗 -->
+<div id="pm-admin-modal" class="pm-modal-overlay">
+  <div class="pm-dialog" style="max-width:440px;">
+    <div class="pm-dialog-head">
+      <div class="pm-dialog-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>管理员工作台</span>
+      </div>
+      <button type="button" class="pm-dialog-close" id="pm-admin-close" title="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-dialog-body" id="pm-admin-login-body">
+      <p style="font-size:13px;color:var(--dim);margin:0;">
+        请输入管理员凭据以激活管理模式。激活后可自由删除、增添已有论文与期刊，管理网站索引。
+      </p>
+      <div class="pm-form-row">
+        <label class="pm-form-label">管理员密码</label>
+        <input type="password" id="pm-admin-pass" class="pm-input" placeholder="请输入密码">
+      </div>
+      <div id="pm-admin-err" style="color:#ef4444;font-size:12px;display:none;"></div>
+    </div>
+    <div class="pm-dialog-body" id="pm-admin-panel-body" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:#10b981;font-size:13px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>管理员身份已激活！卡片上已展示专属「删除文献」操作项。</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+        <button type="button" class="pm-btn primary" id="pm-admin-new-paper">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>录入并新增权威学术文献</span>
+        </button>
+        <button type="button" class="pm-btn ghost" id="pm-admin-logout" style="color:#ef4444;justify-content:center;">
+          <span>退出管理员模式</span>
+        </button>
+      </div>
+    </div>
+    <div class="pm-dialog-foot" id="pm-admin-login-foot">
+      <button type="button" class="pm-btn ghost" id="pm-admin-cancel">取消</button>
+      <button type="button" class="pm-btn primary" id="pm-admin-submit">确认登录</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ===== module: updater ===== */
 /* ===== 在线更新 / 部署信息（对接 GitHub Release） ===== */
@@ -4246,7 +4745,7 @@ setTheme('dark');
   var CHECK_INTERVAL = 6 * 3600 * 1000; /* 每 6 小时自动检查一次 */
   var st = {};
   try { st = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) { st = {}; }
-  var cfg = { version: '5.3.1', build: '2026-10-14', repo: 'KingXiaoTaoOVO/papers-manager' };
+  var cfg = { version: '5.4.0', build: '2026-10-19', repo: 'KingXiaoTaoOVO/papers-manager' };
 
   var I18N = {
     zh: {
@@ -4916,8 +5415,16 @@ setTheme('dark');
     return arr.length ? arr : [1];
   }
 
-  function extractPdfParas(pdfjsLib, data, pageRangeStr) {
-    return pdfjsLib.getDocument({ data: data }).promise.then(function (doc) {
+  function extractPdfParas(docOrData, pageRangeStr) {
+    var getDocPromise;
+    if (docOrData && typeof docOrData.getPage === 'function') {
+      getDocPromise = Promise.resolve(docOrData);
+    } else {
+      var clonedData = (docOrData && docOrData.slice) ? docOrData.slice(0) : docOrData;
+      getDocPromise = window.pdfjsLib.getDocument({ data: clonedData }).promise;
+    }
+
+    return getDocPromise.then(function (doc) {
       var targetPages = parsePageRange(pageRangeStr, doc.numPages);
       var paras = [], counter = 1;
       var chain = Promise.resolve();
@@ -5504,7 +6011,9 @@ setTheme('dark');
       reader.onload = function (e) {
         state.fileBytes = e.target.result;
         loadPdfjs().then(function (pdfjs) {
-          return pdfjs.getDocument({ data: state.fileBytes }).promise;
+          // 传递 buffer 副本给 getDocument，避免 Web Worker transfer 导致主线程 ArrayBuffer 被 detach
+          var clonedBuf = (state.fileBytes && state.fileBytes.slice) ? state.fileBytes.slice(0) : state.fileBytes;
+          return pdfjs.getDocument({ data: clonedBuf }).promise;
         }).then(function (pdfDoc) {
           state.pdfDoc = pdfDoc;
           state.totalPages = pdfDoc.numPages;
@@ -5523,14 +6032,18 @@ setTheme('dark');
           renderPdfPage(1);
 
           var pagesVal = ($('pm-xl-pages').value || '').trim();
-          extractPdfParas(window.pdfjsLib, state.fileBytes, pagesVal).then(function (paras) {
+          extractPdfParas(pdfDoc, pagesVal).then(function (paras) {
             state.paras = paras;
             renderParas();
             updateStatus('PDF 解析就绪，共 ' + state.totalPages + ' 页 / ' + paras.length + ' 个学术段落');
             $('pm-xl-run').disabled = false;
             checkCloudSharedCache(state.activePaperKey);
+          }).catch(function (pErr) {
+            console.error('PDF 段落提取异常:', pErr);
+            updateStatus('PDF 段落提取异常: ' + pErr.message);
           });
         }).catch(function (err) {
+          console.error('PDF 解析失败:', err);
           updateStatus('PDF 解析失败: ' + err.message);
         });
       };
@@ -5870,6 +6383,69 @@ setTheme('dark');
     setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1000);
   }
 
+  function loadPaperForTranslation(paper) {
+    if (!paper) return;
+    openStudio();
+    var title = paper.titleCN || paper.titleEN || paper.fileName || '学术文献';
+    var titleEl = $('pm-xl-doc-title');
+    if (titleEl) titleEl.textContent = title;
+    var badgeEl = $('pm-xl-doc-badge');
+    if (badgeEl) badgeEl.textContent = (paper.journal || paper.category || '学术精选文献') + (paper.year ? ' · ' + paper.year : '');
+
+    var dropEl = $('pm-xl-drop');
+    if (dropEl) dropEl.style.display = 'none';
+    var fileCard = $('pm-xl-file-card');
+    if (fileCard) fileCard.style.display = 'flex';
+    var fnEl = $('pm-xl-filename');
+    if (fnEl) fnEl.textContent = paper.fileName || (title + '.docx');
+    var fsEl = $('pm-xl-filesize');
+    if (fsEl) fsEl.textContent = paper.journal ? (paper.journal + (paper.doi ? ' · DOI:' + paper.doi : '')) : '内置精选文献';
+
+    state.fileType = (paper.ext === 'pdf') ? 'pdf' : 'docx';
+    state.activePaperKey = paper.doi || ('paper_' + (paper.id || paper.fileName));
+    state.paras = [];
+    state.trans = [];
+
+    var rawParas = [];
+    if (Array.isArray(paper.paras) && paper.paras.length) {
+      rawParas = paper.paras;
+    } else if (paper.fullText) {
+      rawParas = paper.fullText.split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    } else {
+      if (paper.titleEN) rawParas.push(paper.titleEN);
+      if (paper.abstractEN) {
+        var segs = paper.abstractEN.split(/(?<=[.!?])\s+/);
+        rawParas = rawParas.concat(segs);
+      } else if (paper.abstract) {
+        rawParas = rawParas.concat(paper.abstract.split(/\n+/));
+      }
+    }
+
+    if (rawParas.length) {
+      var counter = 1;
+      state.paras = rawParas.map(function (item) {
+        var txt = (typeof item === 'string') ? item : (item.text || String(item));
+        var isHead = (typeof item === 'object' && item.isHeading) || (txt.length < 80 && /^(Abstract|Introduction|Methods|Results|Discussion|References|Conclusion|\d+(\.\d+)*\s+[A-Z])/i.test(txt));
+        return {
+          id: counter++,
+          text: txt,
+          isHeading: isHead,
+          isMath: /[\$\=∑∫∂√α-ω]/.test(txt)
+        };
+      });
+      renderParas();
+      setViewMode('dual');
+      $('pm-xl-run').disabled = false;
+      updateStatus('文献《' + title.slice(0, 24) + '...》已成功载入翻译研读舱，共 ' + state.paras.length + ' 个学术段落');
+      checkCloudSharedCache(state.activePaperKey);
+    } else {
+      updateStatus('文献已载入，准备翻译');
+    }
+  }
+
+  window.openXlateStudio = openStudio;
+  window.openXlateStudioWithPaper = loadPaperForTranslation;
+
   // DOM 就绪启动
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
@@ -5879,6 +6455,770 @@ setTheme('dark');
   } else {
     initLangSelects();
     bindEvents();
+  }
+
+})();
+
+/* ===== module: catalog ===== */
+/* ===== module: catalog.js (学科大类整理 / 用户免登录上传 / 管理员门户 / 全球学术检索 / 中英智能互通) ===== */
+(function () {
+  'use strict';
+
+  var CATEGORIES = [
+    { id: 'all', name: '全部学科', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>' },
+    { id: 'cs_ai', name: '人工智能与计算科学', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' },
+    { id: 'neuro', name: '神经科学与脑科学', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><path d="M9 21h6"/></svg>' },
+    { id: 'psych', name: '心理学与认知行为', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>' },
+    { id: 'bio', name: '生物医药与生命科学', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/></svg>' },
+    { id: 'med', name: '临床医学与公共健康', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>' },
+    { id: 'phys_eng', name: '物理与工程技术', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>' },
+    { id: 'user_lib', name: '用户贡献文库', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' }
+  ];
+
+  // 学术双向互通拓展词表（中文 <-> 英文精准学术对等词）
+  var BILINGUAL_DICT = {
+    '呼吸': ['respiration', 'breathing', 'breath', 'respiratory'],
+    'respiration': ['呼吸', '呼吸调节'],
+    'breathing': ['呼吸', '气息'],
+    '冥想': ['meditation', 'meditative', 'mindfulness', 'dhyana'],
+    'meditation': ['冥想', '静观'],
+    '正念': ['mindfulness', 'mindful', 'acceptance'],
+    'mindfulness': ['正念', '当下觉察', '静观'],
+    '抑郁': ['depression', 'depressive', 'major depressive'],
+    'depression': ['抑郁', '抑郁症'],
+    '焦虑': ['anxiety', 'anxious'],
+    'anxiety': ['焦虑', '焦虑症'],
+    '注意力': ['attention', 'attentional', 'focus'],
+    'attention': ['注意力', '注意机制', '自注意力'],
+    '脑电': ['eeg', 'electroencephalogram', 'electroencephalography'],
+    'eeg': ['脑电', '脑电波', '脑电信号'],
+    '神经': ['neural', 'neuro', 'neuron', 'nervous'],
+    'neural': ['神经', '神经网络'],
+    '皮层': ['cortex', 'cortical', 'prefrontal'],
+    'cortex': ['皮层', '大脑皮质'],
+    '深度学习': ['deep learning', 'neural network'],
+    'deep learning': ['深度学习'],
+    '神经网络': ['neural network', 'deep learning'],
+    'neural network': ['神经网络'],
+    '人工智能': ['artificial intelligence', 'ai', 'machine learning'],
+    'artificial intelligence': ['人工智能', 'AI'],
+    '变分': ['variational', 'vae'],
+    'variational': ['变分', '变分推断'],
+    '自监督': ['self-supervised'],
+    'self-supervised': ['自监督'],
+    '脑机接口': ['brain-computer interface', 'bci'],
+    'bci': ['脑机接口'],
+    '心率': ['heart rate', 'hrv', 'cardiac'],
+    'hrv': ['心率变异性', '心率'],
+    '幸福感': ['well-being', 'wellbeing', 'happiness'],
+    'well-being': ['幸福感', '福祉', '主观幸福'],
+    'wellbeing': ['幸福感', '福祉'],
+    '元分析': ['meta-analysis', 'systematic review'],
+    'meta-analysis': ['元分析', '荟萃分析'],
+    '睡眠': ['sleep', 'circadian', 'insomnia'],
+    'sleep': ['睡眠', '入睡'],
+    '大语言模型': ['large language model', 'llm'],
+    'llm': ['大语言模型', '语言模型'],
+    '蛋白质': ['protein', 'proteomics'],
+    'protein': ['蛋白质', '蛋白'],
+    '基因': ['gene', 'genetic', 'genome'],
+    'gene': ['基因', '遗传'],
+    '情绪': ['emotion', 'emotional', 'affective'],
+    'emotion': ['情绪', '情感']
+  };
+
+  var curCategory = 'all';
+  var adminToken = sessionStorage.getItem('pm_admin_token') || '';
+  var dynamicExpansionCache = {};
+
+  function $(id) { return document.getElementById(id); }
+
+  // 1. 自动对文献进行学术大类分类
+  function classifyPaper(p) {
+    if (p.category && p.category !== '未分类') return p.category;
+    if (p.isUserUpload) return '用户贡献与自传文献';
+
+    var txt = [
+      p.titleCN || '',
+      p.titleEN || '',
+      p.journal || '',
+      (p.keywords || []).join(' '),
+      p.relPath || '',
+      (p.institutions || []).join(' ')
+    ].join(' ').toLowerCase();
+
+    // 神经科学与脑科学
+    if (/eeg|brain|cortex|neuroscience|脑电|皮层|脑区|脑机|神经科学|fmri|cortex|synap/.test(txt)) {
+      return '神经科学与脑科学';
+    }
+    // 人工智能与计算科学
+    if (/ieee|neural network|deep learning|machine learning|computing|affective computing|algorithm|artificial intelligence|transformer|llm|深度学习|计算|算法|神经网络|人工智能/.test(txt)) {
+      return '人工智能与计算科学';
+    }
+    // 心理学与认知行为
+    if (/psychol|well-being|mindful|meditat|depress|anxiety|stress|emotion|affect|happiness|resilience|心理|冥想|正念|幸福感|情绪|行为|疲劳|压力|认知/.test(txt)) {
+      return '心理学与认知行为';
+    }
+    // 临床医学与公共健康
+    if (/lancet|jama|clinical|medicine|health|trial|patient|therapy|rct|disease|mortality|epidemiology|cancer|cardiac|public health|医学|临床|健康|治疗|患者|精神医学/.test(txt)) {
+      return '临床医学与公共健康';
+    }
+    // 生物医药与生命科学
+    if (/cell|gene|protein|dna|rna|molecular|bio|biomarker|crispr|pharmac|生命|细胞|生物|基因|蛋白/.test(txt)) {
+      return '生物医药与生命科学';
+    }
+    // 物理与工程技术
+    if (/sensor|physic|engineering|device|material|quantum|optics|nanomaterial|mechanics|semiconductor|传感器|工程|器件|物理/.test(txt)) {
+      return '物理与工程技术';
+    }
+
+    return '神经科学与脑科学';
+  }
+
+  // 2. 统计各学科文献数量
+  function getCategoryCounts() {
+    var counts = { all: 0, cs_ai: 0, neuro: 0, psych: 0, bio: 0, med: 0, phys_eng: 0, user_lib: 0 };
+    if (!window.STATE || !Array.isArray(window.STATE.papers)) return counts;
+
+    counts.all = window.STATE.papers.length;
+    window.STATE.papers.forEach(function (p) {
+      if (!p.category) p.category = classifyPaper(p);
+      var cat = p.category;
+      if (p.isUserUpload) counts.user_lib++;
+      if (cat.indexOf('计算') !== -1 || cat.indexOf('智能') !== -1) counts.cs_ai++;
+      else if (cat.indexOf('脑') !== -1 || cat.indexOf('神经') !== -1) counts.neuro++;
+      else if (cat.indexOf('心理') !== -1 || cat.indexOf('认知') !== -1) counts.psych++;
+      else if (cat.indexOf('生命') !== -1 || cat.indexOf('生物') !== -1) counts.bio++;
+      else if (cat.indexOf('临床') !== -1 || cat.indexOf('医学') !== -1) counts.med++;
+      else if (cat.indexOf('物理') !== -1 || cat.indexOf('工程') !== -1) counts.phys_eng++;
+    });
+    return counts;
+  }
+
+  // 3. 构建并挂载学科大类筛选导航条
+  function mountCategoryStrip() {
+    var existing = $('pm-cat-strip');
+    if (existing) existing.remove();
+
+    var strip = document.createElement('div');
+    strip.id = 'pm-cat-strip';
+
+    var inner = document.createElement('div');
+    inner.className = 'pm-cat-inner';
+
+    var tabs = document.createElement('div');
+    tabs.className = 'pm-cat-tabs';
+
+    var counts = getCategoryCounts();
+
+    CATEGORIES.forEach(function (cat) {
+      var pill = document.createElement('div');
+      pill.className = 'pm-cat-pill' + (curCategory === cat.id ? ' active' : '');
+      pill.setAttribute('data-cat-id', cat.id);
+      var cnt = counts[cat.id] || 0;
+      pill.innerHTML = cat.icon + '<span>' + cat.name + '</span><span class="pm-pill-cnt">' + cnt + '</span>';
+
+      pill.onclick = function () {
+        curCategory = cat.id;
+        document.querySelectorAll('.pm-cat-pill').forEach(function (el) { el.classList.remove('active'); });
+        pill.classList.add('active');
+        applyFiltersAndRender();
+      };
+      tabs.appendChild(pill);
+    });
+
+    var actions = document.createElement('div');
+    actions.className = 'pm-cat-actions';
+
+    // 上传论文入口
+    var uploadBtn = document.createElement('button');
+    uploadBtn.type = 'button';
+    uploadBtn.className = 'pm-action-btn gold';
+    uploadBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>上传文献</span>';
+    uploadBtn.onclick = function () { openModal('pm-upload-modal'); };
+
+    // 全球学术检索入口
+    var globalBtn = document.createElement('button');
+    globalBtn.type = 'button';
+    globalBtn.className = 'pm-action-btn green';
+    globalBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>全球学术</span>';
+    globalBtn.onclick = function () { openModal('pm-global-modal'); };
+
+    // 管理员管理入口
+    var adminBtn = document.createElement('button');
+    adminBtn.type = 'button';
+    adminBtn.id = 'pm-top-admin-btn';
+    adminBtn.className = 'pm-action-btn' + (adminToken ? ' admin-on' : '');
+    adminBtn.innerHTML = adminToken
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>管理已激活</span>'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>管理员</span>';
+    adminBtn.onclick = function () { openAdminModal(); };
+
+    actions.appendChild(uploadBtn);
+    actions.appendChild(globalBtn);
+    actions.appendChild(adminBtn);
+
+    inner.appendChild(tabs);
+    inner.appendChild(actions);
+    strip.appendChild(inner);
+
+    var main = document.querySelector('.main');
+    if (main) {
+      main.insertBefore(strip, main.firstChild);
+    }
+  }
+
+  // 4. 中英双向智能互通拓展算法
+  function expandQueryTerms(q) {
+    if (!q) return [];
+    var raw = q.trim().toLowerCase();
+    var terms = [raw];
+
+    // 查阅本地核心对等学术词库
+    Object.keys(BILINGUAL_DICT).forEach(function (k) {
+      if (raw.indexOf(k.toLowerCase()) !== -1) {
+        BILINGUAL_DICT[k].forEach(function (equiv) {
+          terms.push(equiv.toLowerCase());
+        });
+      }
+    });
+
+    // 动态网络翻译结果注入
+    if (dynamicExpansionCache[raw]) {
+      var dyn = dynamicExpansionCache[raw];
+      if (dyn.cn && terms.indexOf(dyn.cn.toLowerCase()) === -1) terms.push(dyn.cn.toLowerCase());
+      if (dyn.en && terms.indexOf(dyn.en.toLowerCase()) === -1) terms.push(dyn.en.toLowerCase());
+    }
+
+    return terms;
+  }
+
+  // 异步触发后端翻译增强扩展
+  var expandDebounceTimer = null;
+  function triggerServerQueryExpansion(q) {
+    if (!q || q.length < 2) return;
+    clearTimeout(expandDebounceTimer);
+    expandDebounceTimer = setTimeout(function () {
+      if (dynamicExpansionCache[q]) return;
+      fetch('/api/papers/expand_query?q=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data && data.ok) {
+            dynamicExpansionCache[q] = data;
+            if (window.render) window.render();
+          }
+        }).catch(function () {});
+    }, 400);
+  }
+
+  // 5. 挂钩原系统的 match(p, q) 和 visible()
+  function hookSearchAndFilters() {
+    if (!window.visible) return;
+
+    // 重新封装 match 支持中英智能双向互通搜索
+    window.match = function (p, q) {
+      if (!q) return true;
+      triggerServerQueryExpansion(q);
+      var queryTerms = expandQueryTerms(q);
+
+      var hay = [
+        p.titleCN || '',
+        p.titleEN || '',
+        p.abstract || '',
+        p.abstractCN || '',
+        p.abstractEN || '',
+        p.conclusion || '',
+        (p.keywords || []).join(' '),
+        p.fullText || '',
+        p.relPath || '',
+        p.journal || '',
+        p.platform || '',
+        (p.institutions || []).join(' '),
+        p.doi || '',
+        p.category || ''
+      ].join(' ').toLowerCase();
+
+      return queryTerms.some(function (t) {
+        return hay.indexOf(t) >= 0;
+      });
+    };
+
+    // 重新封装 visible 支持大类筛选
+    var oldVisible = window.visible;
+    window.visible = function () {
+      var arr = oldVisible();
+      if (curCategory === 'all') return arr;
+
+      return arr.filter(function (p) {
+        if (!p.category) p.category = classifyPaper(p);
+        if (curCategory === 'user_lib') return p.isUserUpload;
+        if (curCategory === 'cs_ai') return p.category.indexOf('计算') !== -1 || p.category.indexOf('智能') !== -1;
+        if (curCategory === 'neuro') return p.category.indexOf('脑') !== -1 || p.category.indexOf('神经') !== -1;
+        if (curCategory === 'psych') return p.category.indexOf('心理') !== -1 || p.category.indexOf('认知') !== -1;
+        if (curCategory === 'bio') return p.category.indexOf('生命') !== -1 || p.category.indexOf('生物') !== -1;
+        if (curCategory === 'med') return p.category.indexOf('临床') !== -1 || p.category.indexOf('医学') !== -1;
+        if (curCategory === 'phys_eng') return p.category.indexOf('物理') !== -1 || p.category.indexOf('工程') !== -1;
+        return true;
+      });
+    };
+
+    // 重新包装 render 在卡片上挂载即刻双语翻译按钮与管理员删除按钮
+    var oldRender = window.render;
+    window.render = function () {
+      oldRender();
+      enhanceCardsUI();
+    };
+  }
+
+  function applyFiltersAndRender() {
+    if (window.render) window.render();
+    if (window.refreshStreamCount) window.refreshStreamCount();
+  }
+
+  // 6. 丰富卡片视觉与操作按钮
+  function enhanceCardsUI() {
+    var host = $('list');
+    if (!host) return;
+
+    var cards = host.querySelectorAll('.card');
+    cards.forEach(function (card) {
+      var idStr = card.getAttribute('data-id');
+      if (!idStr) return;
+      var p = (window.STATE.papers || []).find(function (x) { return String(x.id) === String(idStr); });
+      if (!p) return;
+
+      // 1. 增强标签行添加学科大类与来源
+      var tagRow = card.querySelector('.tag-row');
+      if (tagRow && !tagRow.querySelector('.pm-cat-tag')) {
+        var catName = p.category || classifyPaper(p);
+        var spanCat = document.createElement('span');
+        spanCat.className = 't pm-cat-tag';
+        spanCat.style.cssText = 'border-color:#c9a86a;color:#c9a86a;background:rgba(201,168,106,0.1);font-weight:600;display:inline-flex;align-items:center;gap:4px;';
+        spanCat.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' + catName;
+        tagRow.insertBefore(spanCat, tagRow.firstChild);
+
+        if (p.isUserUpload) {
+          var spanUsr = document.createElement('span');
+          spanUsr.className = 't pm-usr-tag';
+          spanUsr.style.cssText = 'border-color:#10b981;color:#10b981;background:rgba(16,185,129,0.1);font-weight:600;display:inline-flex;align-items:center;gap:4px;';
+          spanUsr.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>用户文库';
+          tagRow.insertBefore(spanUsr, tagRow.firstChild);
+        }
+      }
+
+      // 2. 增强动作按钮行添加「即刻双语翻译」与「管理员删除」
+      var acts = card.querySelector('.acts');
+      if (acts) {
+        if (!acts.querySelector('.pm-act-xlate')) {
+          var btnX = document.createElement('button');
+          btnX.type = 'button';
+          btnX.className = 'act pm-act-xlate';
+          btnX.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>即刻双语翻译';
+          btnX.onclick = function (e) {
+            e.stopPropagation();
+            if (window.openXlateStudioWithPaper) {
+              window.openXlateStudioWithPaper(p);
+            }
+          };
+          acts.insertBefore(btnX, acts.firstChild);
+        }
+
+        // 管理员删除按钮
+        if (adminToken && !acts.querySelector('.pm-act-del')) {
+          var btnDel = document.createElement('button');
+          btnDel.type = 'button';
+          btnDel.className = 'act bad pm-act-del';
+          btnDel.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>删除文献';
+          btnDel.onclick = function (e) {
+            e.stopPropagation();
+            deletePaper(p);
+          };
+          acts.appendChild(btnDel);
+        }
+      }
+    });
+  }
+
+  // 7. 弹窗打开与关闭
+  function openModal(id) {
+    var el = $(id);
+    if (el) el.classList.add('open');
+  }
+  function closeModal(id) {
+    var el = $(id);
+    if (el) el.classList.remove('open');
+  }
+
+  // 8. 模态框事件绑定
+  function bindModals() {
+    // 8.1 用户自主免登录上传
+    var upClose = $('pm-upload-close');
+    var upCancel = $('pm-up-cancel');
+    var upSubmit = $('pm-up-submit');
+    if (upClose) upClose.onclick = function () { closeModal('pm-upload-modal'); };
+    if (upCancel) upCancel.onclick = function () { closeModal('pm-upload-modal'); };
+
+    if (upSubmit) {
+      upSubmit.onclick = function () {
+        var cat = $('pm-up-cat').value;
+        var titleCN = ($('pm-up-title-cn').value || '').trim();
+        var titleEN = ($('pm-up-title-en').value || '').trim();
+        var authors = ($('pm-up-authors').value || '').trim();
+        var journal = ($('pm-up-journal').value || '').trim() || '用户文库';
+        var year = ($('pm-up-year').value || '').trim() || '2026';
+        var doi = ($('pm-up-doi').value || '').trim();
+        var abstract = ($('pm-up-abstract').value || '').trim();
+        var fileInput = $('pm-up-file');
+
+        if (!titleCN && !titleEN) {
+          alert('请至少填写中文或英文标题！');
+          return;
+        }
+
+        var statusEl = $('pm-up-status');
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.textContent = '正在保存上传文献…';
+        }
+        upSubmit.disabled = true;
+
+        var doSend = function (fileB64, fileName) {
+          var payload = {
+            category: cat,
+            titleCN: titleCN || titleEN,
+            titleEN: titleEN,
+            authors: authors,
+            journal: journal,
+            year: year,
+            doi: doi,
+            abstract: abstract,
+            abstractCN: titleCN ? abstract : '',
+            abstractEN: titleEN ? abstract : '',
+            fileBase64: fileB64 || null,
+            fileName: fileName || ''
+          };
+
+          fetch('/api/papers/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(function (r) { return r.json(); })
+            .then(function (res) {
+              upSubmit.disabled = false;
+              if (res && res.ok && res.paper) {
+                // 实时加入前端并保存
+                res.paper.status = 'ok';
+                window.STATE.papers.unshift(res.paper);
+                if (window.saveCache) window.saveCache();
+                closeModal('pm-upload-modal');
+                alert('文献《' + res.paper.titleCN + '》上传入库成功！已加入「' + cat + '」与「用户贡献文库」。');
+                // 清空表单
+                $('pm-up-title-cn').value = '';
+                $('pm-up-title-en').value = '';
+                $('pm-up-abstract').value = '';
+                fileInput.value = '';
+                mountCategoryStrip();
+                applyFiltersAndRender();
+              } else {
+                alert('上传失败: ' + (res.error || '服务器异常'));
+              }
+            }).catch(function (err) {
+              upSubmit.disabled = false;
+              alert('请求失败: ' + err.message);
+            });
+        };
+
+        if (fileInput.files && fileInput.files[0]) {
+          var f = fileInput.files[0];
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var b64 = e.target.result.split(',')[1];
+            doSend(b64, f.name);
+          };
+          reader.readAsDataURL(f);
+        } else {
+          doSend(null, null);
+        }
+      };
+    }
+
+    // 8.2 全球学术检索模态交互
+    var gsClose = $('pm-global-close');
+    var gsBtn = $('pm-gs-btn');
+    var gsQuery = $('pm-gs-query');
+    if (gsClose) gsClose.onclick = function () { closeModal('pm-global-modal'); };
+
+    function doGlobalSearch() {
+      var q = (gsQuery.value || '').trim();
+      var source = $('pm-gs-source').value;
+      if (!q) {
+        alert('请输入学术关键词');
+        return;
+      }
+      var statusEl = $('pm-gs-status');
+      var resultsEl = $('pm-gs-results');
+      statusEl.textContent = '正在通过国际学术 API 并发检索 ' + (source === 'all' ? 'arXiv 与 Crossref' : source) + '…';
+      resultsEl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--dim);">正在检索全球国际文献数据库…</div>';
+
+      fetch('/api/papers/search_global?q=' + encodeURIComponent(q) + '&source=' + encodeURIComponent(source) + '&limit=12')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.ok || !data.papers || !data.papers.length) {
+            statusEl.textContent = '检索完成，未找到相关全球学术文献。';
+            resultsEl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--dim);">未找到相关文献，请尝试更换关键词。</div>';
+            return;
+          }
+          statusEl.textContent = '检索成功！找到 ' + data.papers.length + ' 篇国际文献（' + (data.query_en ? '英文扩展: ' + data.query_en : '') + '）';
+          resultsEl.innerHTML = '';
+
+          data.papers.forEach(function (item) {
+            var card = document.createElement('div');
+            card.className = 'pm-res-card';
+            var authorsStr = (item.authors || []).join(', ');
+            var absStr = item.abstract || item.abstractEN || '（暂无详细摘要）';
+
+            card.innerHTML =
+              '<div class="pm-res-title">' + (item.titleCN || item.titleEN) + '</div>' +
+              '<div class="pm-res-meta">' +
+                '<span class="badge">' + item.source + '</span>' +
+                '<span class="badge" style="background:rgba(16,185,129,0.12);color:#10b981;">' + (item.category || '学术精选') + '</span>' +
+                '<span>' + (item.journal || '国际期刊') + '</span>' +
+                '<span>' + (item.year || '') + '</span>' +
+                (authorsStr ? '<span>' + authorsStr + '</span>' : '') +
+              '</div>' +
+              '<div class="pm-res-abs">' + absStr + '</div>' +
+              '<div class="pm-res-acts">' +
+                '<button type="button" class="pm-btn primary pm-imp-btn" style="padding:4px 10px;font-size:12px;">' +
+                  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>一键入库' +
+                '</button>' +
+                '<button type="button" class="pm-btn pm-trans-btn" style="padding:4px 10px;font-size:12px;border-color:rgba(201,168,106,0.4);color:#c9a86a;">' +
+                  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>即刻双语翻译' +
+                '</button>' +
+                (item.doi ? '<a class="pm-btn ghost" href="https://doi.org/' + encodeURIComponent(item.doi) + '" target="_blank" rel="noopener" style="padding:4px 10px;font-size:12px;">DOI直连</a>' : '') +
+              '</div>';
+
+            // 一键入库
+            card.querySelector('.pm-imp-btn').onclick = function () {
+              var btn = this;
+              btn.disabled = true;
+              btn.textContent = '正在入库…';
+              fetch('/api/papers/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  titleCN: item.titleCN || item.titleEN,
+                  titleEN: item.titleEN,
+                  authors: item.authors,
+                  journal: item.journal,
+                  year: item.year,
+                  category: item.category,
+                  doi: item.doi,
+                  abstract: item.abstract,
+                  abstractEN: item.abstractEN
+                })
+              }).then(function (r) { return r.json(); })
+                .then(function (res) {
+                  if (res && res.ok && res.paper) {
+                    btn.textContent = '已入库';
+                    btn.style.background = '#10b981';
+                    btn.style.color = '#fff';
+                    window.STATE.papers.unshift(res.paper);
+                    if (window.saveCache) window.saveCache();
+                    mountCategoryStrip();
+                    applyFiltersAndRender();
+                  } else {
+                    btn.disabled = false;
+                    btn.textContent = '入库失败';
+                  }
+                });
+            };
+
+            // 即刻翻译研读
+            card.querySelector('.pm-trans-btn').onclick = function () {
+              closeModal('pm-global-modal');
+              if (window.openXlateStudioWithPaper) {
+                window.openXlateStudioWithPaper(item);
+              }
+            };
+
+            resultsEl.appendChild(card);
+          });
+        }).catch(function (err) {
+          statusEl.textContent = '检索异常: ' + err.message;
+        });
+    }
+
+    if (gsBtn) gsBtn.onclick = doGlobalSearch;
+    if (gsQuery) {
+      gsQuery.onkeydown = function (e) {
+        if (e.key === 'Enter') doGlobalSearch();
+      };
+    }
+
+    // 8.3 管理员登录与退出
+    var admClose = $('pm-admin-close');
+    var admCancel = $('pm-admin-cancel');
+    var admSubmit = $('pm-admin-submit');
+    var admLogout = $('pm-admin-logout');
+    var admNewPaper = $('pm-admin-new-paper');
+
+    if (admClose) admClose.onclick = function () { closeModal('pm-admin-modal'); };
+    if (admCancel) admCancel.onclick = function () { closeModal('pm-admin-modal'); };
+
+    if (admSubmit) {
+      admSubmit.onclick = function () {
+        var pwd = ($('pm-admin-pass').value || '').trim();
+        var errEl = $('pm-admin-err');
+        if (!pwd) {
+          errEl.style.display = 'block';
+          errEl.textContent = '请输入管理员密码';
+          return;
+        }
+        fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pwd })
+        }).then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data && data.ok && data.token) {
+              adminToken = data.token;
+              sessionStorage.setItem('pm_admin_token', adminToken);
+              errEl.style.display = 'none';
+              openAdminModal();
+              var topBtn = $('pm-top-admin-btn');
+              if (topBtn) {
+                topBtn.classList.add('admin-on');
+                topBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>管理已激活</span>';
+              }
+              enhanceCardsUI();
+              alert('管理员身份已成功激活！您可以对现有文献执行删除与管理操作。');
+            } else {
+              errEl.style.display = 'block';
+              errEl.textContent = data.error || '密码错误';
+            }
+          }).catch(function (e) {
+            errEl.style.display = 'block';
+            errEl.textContent = '网络错误: ' + e.message;
+          });
+      };
+    }
+
+    if (admLogout) {
+      admLogout.onclick = function () {
+        adminToken = '';
+        sessionStorage.removeItem('pm_admin_token');
+        var topBtn = $('pm-top-admin-btn');
+        if (topBtn) {
+          topBtn.classList.remove('admin-on');
+          topBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>管理员</span>';
+        }
+        closeModal('pm-admin-modal');
+        document.querySelectorAll('.pm-act-del').forEach(function (b) { b.remove(); });
+        alert('已安全退出管理员模式。');
+      };
+    }
+
+    if (admNewPaper) {
+      admNewPaper.onclick = function () {
+        closeModal('pm-admin-modal');
+        openModal('pm-upload-modal');
+      };
+    }
+  }
+
+  function openAdminModal() {
+    openModal('pm-admin-modal');
+    if (adminToken) {
+      $('pm-admin-login-body').style.display = 'none';
+      $('pm-admin-login-foot').style.display = 'none';
+      $('pm-admin-panel-body').style.display = 'block';
+    } else {
+      $('pm-admin-login-body').style.display = 'block';
+      $('pm-admin-login-foot').style.display = 'flex';
+      $('pm-admin-panel-body').style.display = 'none';
+      $('pm-admin-pass').value = '';
+    }
+  }
+
+  // 9. 管理员删除文献
+  function deletePaper(p) {
+    if (!adminToken) {
+      alert('请先登录管理员！');
+      openAdminModal();
+      return;
+    }
+    var title = p.titleCN || p.titleEN || p.fileName || '该文献';
+    if (!confirm('【管理员确认】确认删除文献《' + title + '》吗？删除后将从本地库与服务端永久移除。')) return;
+
+    fetch('/api/papers/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: p.id, token: adminToken })
+    }).then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.ok) {
+          window.STATE.papers = window.STATE.papers.filter(function (x) {
+            return String(x.id) !== String(p.id);
+          });
+          if (window.saveCache) window.saveCache();
+          mountCategoryStrip();
+          applyFiltersAndRender();
+          alert('文献《' + title + '》已成功删除。');
+        } else {
+          alert('删除失败: ' + (res.error || '权限不足或发生错误'));
+        }
+      }).catch(function (err) {
+        alert('删除请求失败: ' + err.message);
+      });
+  }
+
+  // 10. 与服务端同步已删除名单与用户上传文献
+  function syncServerPapers() {
+    fetch('/api/papers/list')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.ok) return;
+
+        var deletedSet = new Set((data.deleted_ids || []).map(String));
+
+        // 过滤已被删除的文献
+        if (window.STATE && Array.isArray(window.STATE.papers)) {
+          window.STATE.papers = window.STATE.papers.filter(function (p) {
+            return !deletedSet.has(String(p.id));
+          });
+
+          // 补充服务端新增的用户文献
+          var localIds = new Set(window.STATE.papers.map(function (p) { return String(p.id); }));
+          (data.user_papers || []).forEach(function (up) {
+            if (!localIds.has(String(up.id)) && !deletedSet.has(String(up.id))) {
+              up.status = 'ok';
+              window.STATE.papers.unshift(up);
+            }
+          });
+
+          // 重新打上分类
+          window.STATE.papers.forEach(function (p) {
+            if (!p.category) p.category = classifyPaper(p);
+          });
+
+          mountCategoryStrip();
+          applyFiltersAndRender();
+        }
+      }).catch(function () {});
+  }
+
+  // 11. 初始化与挂载
+  function init() {
+    hookSearchAndFilters();
+    bindModals();
+    mountCategoryStrip();
+    syncServerPapers();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 50);
   }
 
 })();

@@ -15,6 +15,7 @@ OUT = os.path.join(ROOT, "web", "html", "index.html")
 MODULES = [
     ("updater", "updater.css", "updater.dom.html", "updater.js"),
     ("xlate", "xlate.css", "xlate.dom.html", "xlate.js"),
+    ("catalog", "catalog.css", "catalog.dom.html", "catalog.js"),
 ]
 
 
